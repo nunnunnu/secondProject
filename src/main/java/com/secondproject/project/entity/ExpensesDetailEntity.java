@@ -33,8 +33,8 @@ public class ExpensesDetailEntity {
     @Column(name="ed_title") 
     private String edTitle;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="ed_ci_seq") 
-    private CategoryInfoEntity edCiSeq;
+    @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="ed_cate_seq") 
+    private CategoryInfoEntity edCateSeq;
 
     @Column(name="ed_date") 
     private LocalDate edDate;
