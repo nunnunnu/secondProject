@@ -46,5 +46,5 @@ public class BoardInfoEntity {
     private Integer biViews;
 
     @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bi_tai_seq") 
-    private targetAreaInfoEntity biTaiSeq;
+    private TargetAreaInfoEntity biTaiSeq;
 }
