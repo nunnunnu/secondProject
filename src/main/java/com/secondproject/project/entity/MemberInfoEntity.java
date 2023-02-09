@@ -36,4 +36,9 @@ public class MemberInfoEntity {
     
     @Column(name = "mi_target_amount") 
     private Integer miTargetAmount;
+    
+    @Column(name = "mi_status") 
+    private Integer miStatus;
+
+
 }
