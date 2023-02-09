@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +31,7 @@ public class BoardImageEntity {
     @Column(name="bimg_uri") 
     private String bimgUri;
     
-    @OneToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bimg_bi_seq") 
+    @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bimg_bi_seq") 
     private BoardInfoEntity bimgBiSeq;
 
 }
