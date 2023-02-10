@@ -37,8 +37,19 @@ public class MemberInfoEntity {
     @Column(name = "mi_target_amount") 
     private Integer miTargetAmount;
     
-    @Column(name = "mi_status") 
-    private Integer miStatus;
+    @Column(name = "mi_name") 
+    private String miName;
 
+    @Column(name = "mi_nickname") 
+    private String miNickname;
+
+    @Column(name = "mi_id") 
+    private String miId;
+
+    @Column(name = "mi_phone") 
+    private String miPhone;
+
+    @Column(name = "mi_gen") 
+    private Integer miGen;
 
 }

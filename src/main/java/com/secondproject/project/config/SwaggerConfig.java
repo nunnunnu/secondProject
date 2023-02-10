@@ -13,8 +13,8 @@ public class SwaggerConfig {
     public OpenAPI floOpenAPI(){
         Info info = new Info()
                 .version("0.0.1")
-                .title("FLO 서비스 API")
-                .description("FLO서비스 Restful API 명세서");
+                .title("가계부 서비스 API")
+                .description("가계부서비스 Restful API 명세서");
         return new OpenAPI().info(info);
     }
 }
