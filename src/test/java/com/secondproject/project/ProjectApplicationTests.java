@@ -27,15 +27,15 @@ class ProjectApplicationTests {
 	@Autowired TargerAreaInfoRepository tRepo;
 
 	@Test
-	void 엔터티테스트() {
+	void 엔터티테스트(Long member) {
 		System.out.println(bRepo.findAll().get(0).getBiSeq());
 		System.out.println(bimagRepo.findAll().get(0).getBimgSeq());
 		System.out.println(cateRepo.findAll().get(0).getCateSeq());
 		System.out.println(ciRepo.findAll().get(0).getCiSeq());
-		System.out.println(clRepo.findAll().get(0).getClSeq());
 		System.out.println(eRepo.findAll().get(0).getEdSeq());
 		System.out.println(mRepo.findAll().get(0).getMiSeq());
 		System.out.println(tRepo.findAll().get(0).getTaiSeq());
+
 	}
 
 }

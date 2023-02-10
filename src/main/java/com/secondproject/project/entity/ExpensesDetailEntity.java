@@ -41,7 +41,4 @@ public class ExpensesDetailEntity {
 
     @Column(name="ed_amount") 
     private Integer edAmount;
-
-    @Column(name="ed_commnet") 
-    private String edCommnet;
 }
