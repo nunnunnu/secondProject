@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.repository.custom.ExpensesDetailRepositoryCustom;
+import com.secondproject.project.vo.DailyExpensesSearchVO;
+import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.ExpensesDetailListVO;
 
 public interface ExpensesDetailRepository extends JpaRepository<ExpensesDetailEntity, Long>, ExpensesDetailRepositoryCustom{
@@ -35,8 +38,10 @@ public interface ExpensesDetailRepository extends JpaRepository<ExpensesDetailEn
 // @Query(value = "SELECT new com.greenart.firstproject.vo.superadmin.AdminUserVO(u.seq, u.name, u.email, u.nickname, u.birth, u.phone, u.address, u.status, u.regDt) FROM UserEntity u WHERE u.seq = :seq")
 // AdminUserVO findAdminUserVOBySeq(@Param("seq") Long seq);
 
-@Query(
-    value = "select new com.secondproject.project.vo.ExpensesDetailListVO(mi.miSeq, mi.miNickName, mi.miEmail, edMonthDate(date_format(ed_date, '%y-%m')), edTotalAmount(sum(ed_amount))) from ExpensesDetailEntity ed left join MemberInfoEntity mi on mi.miSeq = ed.edMiSeq =: miSeq"
-    )
-    List<ExpensesDetailListVO> getExpensesMonthList(@Param("miSeq") Long miSeq);
+// @Query(
+//     value = "select new com.secondproject.project.vo.ExpensesDetailListVO(mi.miSeq, mi.miNickName, mi.miEmail, edMonthDate(date_format(ed_date, '%y-%m')), edTotalAmount(sum(ed_amount))) from ExpensesDetailEntity ed left join MemberInfoEntity mi on mi.miSeq = ed.edMiSeq =: miSeq"
+//     )
+//     List<ExpensesDetailListVO> getExpensesMonthList(@Param("miSeq") Long miSeq);
+
+// List<DailyExpensesVO> dailyExpenses(DailyExpensesSearchVO search);
 }
