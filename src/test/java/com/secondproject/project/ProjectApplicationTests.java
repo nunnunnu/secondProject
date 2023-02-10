@@ -27,7 +27,7 @@ class ProjectApplicationTests {
 	@Autowired TargerAreaInfoRepository tRepo;
 
 	@Test
-	void 엔터티테스트(Long member) {
+	void 엔터티테스트() {
 		System.out.println(bRepo.findAll().get(0).getBiSeq());
 		System.out.println(bimagRepo.findAll().get(0).getBimgSeq());
 		System.out.println(cateRepo.findAll().get(0).getCateSeq());
