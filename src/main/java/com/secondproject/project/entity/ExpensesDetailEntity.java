@@ -2,6 +2,8 @@ package com.secondproject.project.entity;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -14,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +25,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name="expenses_detail")
+@Builder
+@DynamicInsert
 public class ExpensesDetailEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ed_seq") 
@@ -41,4 +46,11 @@ public class ExpensesDetailEntity {
 
     @Column(name="ed_amount") 
     private Integer edAmount;
+
+    // @Builder
+    // public ExpensesDetailEntity(Integer edAmount, MemberInfoEntity member, CategoryInfoEntity cate){
+    //     this.edAmount = edAmount;
+    //     this.edMiSeq = member;
+    //     this.edCateSeq = cate;
+    // }
 }
