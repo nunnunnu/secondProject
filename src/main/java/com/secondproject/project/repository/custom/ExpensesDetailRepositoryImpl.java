@@ -5,8 +5,9 @@ import java.util.List;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.secondproject.project.entity.QExpensesDetailEntity;
-import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
+import com.secondproject.project.vo.DailyExpensesVO;
+import com.secondproject.project.vo.CategoryExpensesVO;
 
 import jakarta.persistence.EntityManager;
 
@@ -28,6 +29,23 @@ public class ExpensesDetailRepositoryImpl implements ExpensesDetailRepositoryCus
                     )
                     .groupBy(QExpensesDetailEntity.expensesDetailEntity.edDate)
                     .fetch();
+    }
+
+    @Override
+    public List<CategoryExpensesVO> CategoryExpenses(DailyExpensesSearchVO search){
+        return queryfactory.select(Projections.constructor(
+                                        CategoryExpensesVO.class,
+                                        QExpensesDetailEntity.expensesDetailEntity.edCateSeq.cateName,
+                                        QExpensesDetailEntity.expensesDetailEntity.edAmount.sum()
+                                    ))
+                            .join(QExpensesDetailEntity.expensesDetailEntity.edCateSeq).fetchJoin()
+                            .from(QExpensesDetailEntity.expensesDetailEntity)
+                            .where(
+                                QExpensesDetailEntity.expensesDetailEntity.edMiSeq.eq(search.getMember()),
+                                QExpensesDetailEntity.expensesDetailEntity.edDate.between(search.getStartDay(), search.getLastDay())
+                            )
+                            .groupBy(QExpensesDetailEntity.expensesDetailEntity.edDate.month())
+                            .fetch();
     }
     
 }

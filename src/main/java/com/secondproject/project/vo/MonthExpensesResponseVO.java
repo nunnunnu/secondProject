@@ -28,8 +28,6 @@ public class MonthExpensesResponseVO {
                 min = daily;
             }
         }
-        System.out.println("max:"+max);
-        System.out.println("min:"+min);
         this.maxDay = max;
         this.minDay = min;
         
