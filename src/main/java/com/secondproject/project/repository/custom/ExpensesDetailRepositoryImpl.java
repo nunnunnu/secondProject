@@ -7,11 +7,10 @@ import java.util.List;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.secondproject.project.entity.QCategoryInfoEntity;
-import com.secondproject.project.entity.QExpensesDetailEntity;
+import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
-import com.secondproject.project.vo.CategoryExpensesVO;
+import com.secondproject.project.vo.YearExpensesVO;
 
 import jakarta.persistence.EntityManager;
 
@@ -62,6 +61,21 @@ public class ExpensesDetailRepositoryImpl implements ExpensesDetailRepositoryCus
                             )
                             .groupBy(expensesDetailEntity.edDate.year())
                             .fetchFirst();              
+    }
+    @Override
+    public List<YearExpensesVO> yearSum(DailyExpensesSearchVO search){
+        return queryfactory.select(Projections.fields(
+                                YearExpensesVO.class,
+                                expensesDetailEntity.edDate.month().as("month"),
+                                expensesDetailEntity.edAmount.sum().as("sum")
+                            ))
+                            .from(expensesDetailEntity)
+                            .where(
+                                expensesDetailEntity.edMiSeq.eq(search.getMember()),
+                                expensesDetailEntity.edDate.between(search.getStartDay(), search.getLastDay())
+                            )
+                            .groupBy(expensesDetailEntity.edDate.month())
+                            .fetch();              
     }
     
 }
