@@ -14,4 +14,5 @@ public class MemberAddVO {
     private String miNickname;
     private Integer miGen;
     private String miCheckPwd;
+
 }
