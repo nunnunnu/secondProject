@@ -14,10 +14,13 @@ import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ExpensesDetailService {
-    @Autowired MemberInfoRepository mRepo;
-    @Autowired ExpensesDetailRepository edRepo;
+    private final MemberInfoRepository mRepo;
+    private final ExpensesDetailRepository edRepo;
 
     public Map<String, Object> daily(DailyExpensesSearchVO search){
         Map<String, Object> map = new LinkedHashMap<>();

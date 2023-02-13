@@ -16,11 +16,14 @@ import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/expenses")
 public class ExpensesDetailController {
-    @Autowired ExpensesDetailService edService;
-    @Autowired MemberInfoRepository mRepository;
+    private final ExpensesDetailService edService;
+    private final MemberInfoRepository mRepository;
 
     @GetMapping("/month")
     public ResponseEntity<Object> getMonth(){
