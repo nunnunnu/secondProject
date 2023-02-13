@@ -2,6 +2,7 @@ package com.secondproject.project.controller;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -38,50 +39,63 @@ public class ExpensesDetailController {
         @Parameter(description = "조회할 년도(null가능)") @RequestParam @Nullable Integer year,
         @Parameter(description = "조회할 달(null가능)") @RequestParam @Nullable Integer month
     ){
-
         LocalDate firstDay = null;
         LocalDate LastDay = null;
+        LocalDate pastFirstDay = null;
+        LocalDate pastLastDay = null;
 
-        if(year == null|| month == null){
+        if(year == null && month == null){ //월 조회
             firstDay = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
             LastDay = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
-        }else{
-            
+            pastFirstDay = firstDay.minusMonths(1);
+            pastLastDay = LastDay.minusMonths(1);
+        }else if(month==null && year!=null){ //년 조회
+            firstDay = LocalDate.of(year, 1, 1);
+            LastDay = LocalDate.of(year, 12, 31);
+            pastFirstDay = firstDay.minusYears(1);
+            pastLastDay = LastDay.minusYears(1);
+        }else if(year!=null && month!=null){ //이번 달 조회
             firstDay = LocalDate.of(year, month, 1);
             LastDay = firstDay.with(TemporalAdjusters.lastDayOfMonth());
+            pastFirstDay = firstDay.minusMonths(1);
+            pastLastDay = LastDay.minusMonths(1);
         }
         MemberInfoEntity member = mRepository.findAll().get(0);
         DailyExpensesSearchVO search = new DailyExpensesSearchVO(firstDay, LastDay, member);
+        DailyExpensesSearchVO pastSearch = new DailyExpensesSearchVO(pastFirstDay, pastLastDay, member);
 
-        Map<String, Object> map = edService.daily(search);
+        Map<String, Object> map = edService.daily(search, pastSearch);
 
-        return new ResponseEntity<MonthExpensesResponseVO>((MonthExpensesResponseVO)map.get("list"), (HttpStatus)map.get("code"));
-        
+        return new ResponseEntity<>((MonthExpensesResponseVO)map.get("list"),HttpStatus.OK);
     }
-    @Operation(summary = "카테고리 조회", description ="월별 카테고리 합계를 조회합니다.")
+    @Operation(summary = "카테고리 조회", description ="월별 카테고리 합계를 조회합니다. "
+    +"년도만 입력되면 월간 카테고리조회, 년도와 월이 모두 입력되면 월별 조회. 아무것도 입력되지않으면 이번 달 조회입니다.")
     @GetMapping("/cate")
-    public ResponseEntity<CategoryExpensesVO> getCateTotal(
+    public ResponseEntity<List<CategoryExpensesVO>> getCateTotal(
         @Parameter(description = "조회할 년도(null가능)") @RequestParam @Nullable Integer year,
         @Parameter(description = "조회할 달(null가능)") @RequestParam @Nullable Integer month
     ){
 
         LocalDate firstDay = null;
         LocalDate LastDay = null;
+        
 
-        if(year == null|| month == null){
+        if(year == null && month == null){ //월간 조회
             firstDay = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
             LastDay = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
-        }else{
-            
+        }else if(month==null && year!=null){ //년 조회
+            firstDay = LocalDate.of(year, 1, 1);
+            LastDay = LocalDate.of(year, 12, 31);
+        }else if(year!=null && month!=null){ //이번달 조회
             firstDay = LocalDate.of(year, month, 1);
             LastDay = firstDay.with(TemporalAdjusters.lastDayOfMonth());
         }
         MemberInfoEntity member = mRepository.findAll().get(0);
         DailyExpensesSearchVO search = new DailyExpensesSearchVO(firstDay, LastDay, member);
-
+        
         Map<String, Object> map = edService.cateTotal(search);
 
-        return new ResponseEntity<CategoryExpensesVO>((CategoryExpensesVO)map.get("cate"), (HttpStatus)map.get("code"));
+        return new ResponseEntity<List<CategoryExpensesVO>>((List<CategoryExpensesVO>)map.get("cate"), (HttpStatus)map.get("code"));
         
     }
 }
