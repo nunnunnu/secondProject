@@ -20,5 +20,5 @@ public class DailyExpensesVO {
     private LocalDate date;
     @Schema(description = "사용합계")
     private Integer price;
-    private MemberInfoEntity member;
+    // private MemberInfoEntity member;
 }
