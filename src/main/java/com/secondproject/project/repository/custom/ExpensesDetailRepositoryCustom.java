@@ -10,4 +10,6 @@ public interface ExpensesDetailRepositoryCustom {
     List<DailyExpensesVO> dailyExpenses(DailyExpensesSearchVO search);
 
     List<CategoryExpensesVO> CategoryExpenses(DailyExpensesSearchVO search);
+
+    Integer totalSum(DailyExpensesSearchVO search);
 }

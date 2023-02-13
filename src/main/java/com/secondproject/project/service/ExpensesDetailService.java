@@ -22,11 +22,11 @@ public class ExpensesDetailService {
     private final MemberInfoRepository mRepo;
     private final ExpensesDetailRepository edRepo;
 
-    public Map<String, Object> daily(DailyExpensesSearchVO search){
+    public Map<String, Object> daily(DailyExpensesSearchVO search, DailyExpensesSearchVO pastSearch){
         Map<String, Object> map = new LinkedHashMap<>();
         List<DailyExpensesVO> list =edRepo.dailyExpenses(search);
         if(list.size()==0){
-            MonthExpensesResponseVO month = new MonthExpensesResponseVO(null, null, null);
+            MonthExpensesResponseVO month = new MonthExpensesResponseVO();
             map.put("status", false);
             map.put("message", "등록된 지출 내역이 존재하지 않습니다.");
             map.put("code", HttpStatus.NO_CONTENT);
@@ -36,6 +36,7 @@ public class ExpensesDetailService {
         
         MonthExpensesResponseVO month = new MonthExpensesResponseVO();
         month.setting(list);
+        month.changeRate(edRepo.totalSum(pastSearch));
         map.put("status", true);
         map.put("message", "조회했습니다.");
         map.put("code", HttpStatus.OK);
@@ -47,18 +48,25 @@ public class ExpensesDetailService {
         Map<String, Object> map = new LinkedHashMap<>();
         List<CategoryExpensesVO> list =edRepo.CategoryExpenses(search);
         if(list.size()==0){
-            MonthExpensesResponseVO month = new MonthExpensesResponseVO(null, null, null);
+            MonthExpensesResponseVO month = new MonthExpensesResponseVO();
             map.put("status", false);
             map.put("message", "등록된 지출 내역이 존재하지 않습니다.");
             map.put("code", HttpStatus.NO_CONTENT);
             map.put("list", month);
             return map;
         }
+        int total = 0;
+        for(CategoryExpensesVO cate : list){
+            total += cate.getPrice();
+        }
+        for(CategoryExpensesVO cate : list){
+            cate.countRate(total);
+        }
         map.put("status", true);
         map.put("message", "조회했습니다.");
         map.put("code", HttpStatus.OK);
         map.put("cate", list);
-        
+
         return map;
     }
 }
