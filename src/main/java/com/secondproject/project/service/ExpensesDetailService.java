@@ -7,6 +7,10 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.secondproject.project.entity.CategoryInfoEntity;
+import com.secondproject.project.entity.ExpensesDetailEntity;
+import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.vo.CategoryExpensesVO;
@@ -16,14 +20,15 @@ import com.secondproject.project.vo.MonthExpensesResponseVO;
 import com.secondproject.project.vo.YearExpensesListVO;
 import com.secondproject.project.vo.YearExpensesResponseVO;
 import com.secondproject.project.vo.YearExpensesVO;
+import com.secondproject.project.vo.PutExpensesVO;
 
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class ExpensesDetailService {
     private final MemberInfoRepository mRepo;
     private final ExpensesDetailRepository edRepo;
+    private final CategoryInfoRepository cateRepo;
 
     public Map<String, Object> daily(DailyExpensesSearchVO search, DailyExpensesSearchVO pastSearch){
         Map<String, Object> map = new LinkedHashMap<>();
@@ -114,4 +119,46 @@ public class ExpensesDetailService {
         map.put("code", HttpStatus.OK);
         return map;
     }
+    // 지출입력
+    public Map<String, Object> putExpensesService(Long miSeq, PutExpensesVO data) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        MemberInfoEntity member = mRepo.findById(miSeq).get();
+        CategoryInfoEntity cate = cateRepo.findById(data.getCateSeq()).orElse(null);
+        List<ExpensesDetailEntity> expenses = edRepo.findMemberAndCate(member, cate);
+        if(cate != null && member != null) {
+            ExpensesDetailEntity newExpenses = ExpensesDetailEntity.builder()
+                .edMiSeq(member)
+                .edAmount(data.getEdAmont())
+                .edCateSeq(cateRepo.findById(data.getCateSeq()).get())
+                .edTitle(data.getEdtitle())
+                .edDate(data.getEdDate())
+                .build();
+            edRepo.save(newExpenses);
+            resultMap.put("status", true);
+            resultMap.put("message", "지출내역이 등록되었습니다.");
+        }
+        else {
+            // 이부분이 아니라 값이 입력이 안되면 500에러가 뜸
+            resultMap.put("status", false);
+            resultMap.put("message", "지출내역이 등록되지 않았습니다.");
+        }
+
+        return resultMap;
+    }
+
+    // 지출 수정 (제목/ 카테고리/ 날짜/ 금액)
+    // public void updateExpenses(Long miSeq, PlusMinusExpensesVO data) {
+    //     Optional<ExpensesDetailEntity> findById = edRepo.findById(miSeq);
+    //     if(findById.isPresent()) {
+    //         ExpensesDetailEntity expenses = findById.get();
+    //         CategoryInfoEntity cate = expenses.getEdCateSeq();
+
+    //         expenses.PlusMinusExpensesVO(data.getCateSeq(), data.getEdAmount(), data.getEdtitle());
+    //         return ;
+    //     }
+        
+    // }
+    
+
 }

@@ -2,7 +2,10 @@ package com.secondproject.project.vo;
 
 import java.time.LocalDate;
 
+import com.secondproject.project.entity.MemberInfoEntity;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +20,5 @@ public class DailyExpensesVO {
     private LocalDate date;
     @Schema(description = "사용합계")
     private Integer price;
+    private MemberInfoEntity member;
 }
