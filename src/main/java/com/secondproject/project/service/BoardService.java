@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,8 +18,11 @@ import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.BoardImageRepository;
 import com.secondproject.project.repository.BoardInfoRepository;
+import com.secondproject.project.repository.CommentLikesRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
+import com.secondproject.project.vo.board.BoardDetailShowVO;
+import com.secondproject.project.vo.board.BoardShowVO;
 import com.secondproject.project.vo.board.BoardUpdateVO;
 import com.secondproject.project.vo.board.BoardinsertVO;
 
@@ -31,6 +36,7 @@ public class BoardService {
     private final BoardImageRepository bimgRepo;
     private final TargerAreaInfoRepository tRepo;
     private final FileService fService;
+    private final CommentLikesRepository clRepo;
 
     public Map<String, Object> addBoard(Long memberSeq, BoardinsertVO data, MultipartFile... file){
         Map<String, Object> map = new LinkedHashMap<>();
@@ -50,17 +56,24 @@ public class BoardService {
         }
         TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
         
-        BoardInfoEntity entity = new BoardInfoEntity(null, member, data.getTitle(), data.getDetail(), LocalDateTime.now(), null, 0, target);
+        List<BoardImageEntity> fileList = new ArrayList<>();
+        BoardInfoEntity entity = BoardInfoEntity.builder()
+                                .biMiSeq(member)
+                                .biTitle(data.getTitle())
+                                .biDetail(data.getDetail())
+                                .biRegDt(LocalDateTime.now())
+                                .biTaiSeq(target)
+                                .build();
+        // BoardInfoEntity entity = new BoardInfoEntity(null, member, data.getTitle(), data.getDetail(), LocalDateTime.now(), null, 0, target);
         biRepo.save(entity);
         if(file.length!=0){
-            List<BoardImageEntity> fileList = new ArrayList<>();
             for(MultipartFile f : file){
                 BoardImageEntity img = fService.saveImageFile(f);
                 img.setBimgBiSeq(entity);
                 fileList.add(img);
             }
-            bimgRepo.saveAll(fileList);
         }
+        bimgRepo.saveAll(fileList);
         
         map.put("status", true);
         map.put("message", "게시글을 등록하였습니다.");
@@ -125,6 +138,7 @@ public class BoardService {
             }
             bimgRepo.saveAll(fileList);
         }
+        boardEntity.setBiEditDt(LocalDateTime.now());
         biRepo.save(boardEntity);
         map.put("status", true);
         map.put("message", "게시글 수정 성공");
@@ -162,6 +176,76 @@ public class BoardService {
         map.put("status", true);
         map.put("message", "게시글을 삭제했습니다.");
         map.put("code", HttpStatus.OK);
+        return map;
+    }
+    public Map<String, Object> getDetailBoard(Long memberSeq, Long postSeq){
+        Map<String, Object> map = new LinkedHashMap<>();
+        MemberInfoEntity member = miRepo.findById(memberSeq).orElse(null);
+        if(member==null){
+            map.put("status", false);
+            map.put("message", "없는 회원번호입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return map;
+        }
+        BoardInfoEntity board = biRepo.findByBiSeq(postSeq);
+        if(board==null){
+            map.put("status", false);
+            map.put("message", "없는 게시글 번호입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return map;    
+        }
+        TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
+        if(board.getBiTaiSeq().getTaiSeq() != target.getTaiSeq()){
+            map.put("status", false);
+            map.put("message", "조회할 수 없는 구간의 게시글입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return map;        
+        }
+        
+        BoardDetailShowVO bVo = new BoardDetailShowVO(board);
+
+        board.upView();
+
+        biRepo.save(board);
+        
+        map.put("status", true);
+        map.put("message", "조회 성공했습니다.");
+        map.put("code", HttpStatus.OK);
+        map.put("data", bVo);
+
+        return map;
+    }
+    //목록조회
+    public Map<String, Object> getBoard(Long memberSeq, Pageable page){
+        Map<String, Object> map = new LinkedHashMap<>();
+        MemberInfoEntity member = miRepo.findById(memberSeq).orElse(null);
+        if(member==null){
+            map.put("status", false);
+            map.put("message", "없는 회원번호입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            map.put("data", null);
+            return map;
+        }
+        if(member.getMiTargetAmount()!=null){
+            TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
+            Page<BoardInfoEntity> boards = biRepo.findByBiTaiSeqOrderByBiRegDtDesc(target, page);
+            Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
+
+            map.put("status", true);
+            map.put("message", "해당 구간의 게시글을 조회했습니다");
+            map.put("code", HttpStatus.OK);
+            map.put("data", result);
+        }else{
+            Page<BoardInfoEntity> boards = biRepo.findAllByOrderByBiRegDtDesc(page);
+            Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
+
+            map.put("status", true);
+            map.put("message", "모든 게시글을 조회했습니다");
+            map.put("code", HttpStatus.OK);
+            map.put("data", result);
+
+        }
+        
         return map;
     }
 }

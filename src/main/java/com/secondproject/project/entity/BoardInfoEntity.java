@@ -1,6 +1,10 @@
 package com.secondproject.project.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.DynamicInsert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="board_info")
 @Builder
+@DynamicInsert
 public class BoardInfoEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="bi_seq") 
@@ -51,5 +56,18 @@ public class BoardInfoEntity {
     @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bi_tai_seq") 
     private TargetAreaInfoEntity biTaiSeq;
 
-    // @OneToMany(mappedBy="")
+    @OneToMany(mappedBy="bimgBiSeq")
+    private List<BoardImageEntity> imgs = new ArrayList<>();
+    
+    @OneToMany(mappedBy="boardInfoEntity")
+    private List<CommentInfoEntity> comment = new ArrayList<>();
+
+    // @OneToMany(mappedBy="clBiSeq")
+    // private List<CommentLikesEntity> likes = new ArrayList<>();
+
+    public void upView(){
+        this.biViews = this.biViews+1;
+    }
+
+
 }

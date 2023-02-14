@@ -2,10 +2,16 @@ package com.secondproject.project.controller;
 
 import java.util.Map;
 
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.secondproject.project.service.BoardService;
+import com.secondproject.project.vo.board.BoardShowVO;
 import com.secondproject.project.vo.board.BoardUpdateVO;
 import com.secondproject.project.vo.board.BoardinsertVO;
 
@@ -40,7 +47,7 @@ public class BoardController {
 
         return new ResponseEntity<>(map, (HttpStatus)map.get("code"));
     }
-
+    @Operation(summary = "게시글 수정", description ="게시글을 수정합니다. (form-data로 보내주세요)")
     @PostMapping("/update/{member}/{post}")
     public ResponseEntity<Object> updateBoard(
         @Parameter(description = "회원번호") @PathVariable Long member,
@@ -51,6 +58,7 @@ public class BoardController {
         Map<String, Object> map = bService.updateBoard(member, post, data, img);
         return new ResponseEntity<>(map, (HttpStatus)map.get("code"));
     }
+    @Operation(summary = "게시글 삭제")
     @DeleteMapping("/delete/{member}/{post}")
     public ResponseEntity<Object> deleteBoard(
         @Parameter(description = "회원번호") @PathVariable Long member,
@@ -59,4 +67,25 @@ public class BoardController {
         Map<String, Object> map = bService.deleteBoard(member, post);
         return new ResponseEntity<>(map, (HttpStatus)map.get("code"));
     }
+    @Operation(summary = "게시글 상세 조회(미완)")
+    @GetMapping("/show/detail/{member}/{post}")
+    public ResponseEntity<Object> getBoard(
+        @Parameter(description = "회원번호") @PathVariable Long member,
+        @Parameter(description = "조회할 게시글 번호") @PathVariable Long post
+    ){
+        Map<String, Object> map = bService.getDetailBoard(member, post);
+        return new ResponseEntity<>(map, (HttpStatus)map.get("code"));
+    }
+
+    @Operation(summary = "게시글 목록 조회")
+    @PageableAsQueryParam
+    @GetMapping("/show/list/{member}")
+    public ResponseEntity<Page<BoardShowVO>> getBoard(
+        @Parameter(description = "회원번호") @PathVariable Long member,
+        @Parameter(hidden=true) @PageableDefault(size=10, sort="biRegDt",direction = Sort.Direction.ASC) Pageable page
+    ){
+        Map<String, Object> map = bService.getBoard(member, page);
+        return new ResponseEntity<Page<BoardShowVO>>((Page<BoardShowVO>)map.get("data"), (HttpStatus)map.get("code"));
+    }
+    
 }
