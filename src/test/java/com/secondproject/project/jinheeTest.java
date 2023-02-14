@@ -11,8 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
+import com.secondproject.project.repository.TargerAreaInfoRepository;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
@@ -28,6 +30,7 @@ public class jinheeTest {
     
     @Autowired ExpensesDetailRepository edRepo;
     @Autowired MemberInfoRepository memberRepo;
+    @Autowired TargerAreaInfoRepository tRepo;
 
     @Test
     void 회원의일간사용금액조회(){
@@ -49,5 +52,11 @@ public class jinheeTest {
         List<DailyExpensesVO> result = edRepo.dailyExpenses(search);
         
         Assertions.assertThat(result.size()).isNotEqualTo(0);
+    }
+
+    @Test
+    void 목표구간조회(){
+        TargetAreaInfoEntity target = tRepo.findTarget(45000);
+        System.out.println(target);
     }
 }
