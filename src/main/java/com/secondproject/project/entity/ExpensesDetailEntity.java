@@ -47,10 +47,10 @@ public class ExpensesDetailEntity {
     @Column(name="ed_amount") 
     private Integer edAmount;
 
-    // @Builder
-    // public ExpensesDetailEntity(Integer edAmount, MemberInfoEntity member, CategoryInfoEntity cate){
-    //     this.edAmount = edAmount;
-    //     this.edMiSeq = member;
-    //     this.edCateSeq = cate;
-    // }
+    public void updateExpensesDetailEntity(String edTitle, LocalDate edDate, Integer edAmount, CategoryInfoEntity CateSeq){
+        this.edTitle = edTitle;
+        this.edDate = edDate;
+        this.edAmount = edAmount;
+        this.edCateSeq = CateSeq;
+    }
 }

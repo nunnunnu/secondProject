@@ -9,10 +9,9 @@ public class MemberAddVO {
     private String miPwd;
     private String miToken;
     private String miSnsType;
-    private Long miTargetAmount;
-    private Integer mi_status;
+    private Integer miTargetAmount;
+    private Integer miStatus;
     private String miNickname;
     private Integer miGen;
     private String miCheckPwd;
-
 }

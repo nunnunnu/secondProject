@@ -48,11 +48,18 @@ public class MemberInfoEntity {
     
     @Column(name = "mi_gen") 
     private Integer miGen;
+
+    @Column(name = "mi_status")
+    private Integer miStatus;
     
     public MemberInfoEntity(MemberAddVO data) {
         this.miEmail = data.getMiEmail();
         this.miPwd = data.getMiPwd();
         this.miNickname = data.getMiNickname();
         this.miGen = data.getMiGen();
+        this.miTargetAmount = data.getMiTargetAmount();
+        this.miToken = data.getMiToken();
+        this.miSnsType = data.getMiSnsType();
+        this.miStatus = data.getMiStatus();
     }
 }
