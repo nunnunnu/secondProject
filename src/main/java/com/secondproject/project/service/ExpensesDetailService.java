@@ -1,5 +1,6 @@
 package com.secondproject.project.service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
 import com.secondproject.project.vo.YearExpensesListVO;
-import com.secondproject.project.vo.YearExpensesResponseVO;
 import com.secondproject.project.vo.YearExpensesVO;
 import com.secondproject.project.vo.PutExpensesVO;
 
@@ -82,39 +82,40 @@ public class ExpensesDetailService {
         Map<String, Object> map = new LinkedHashMap<>();
         List<YearExpensesVO> list = edRepo.yearSum(search);
         List<YearExpensesVO> pastList = edRepo.yearSum(pastSearch);
-        YearExpensesListVO result = new YearExpensesListVO();
-        result.setName("series1");
+        
+        YearExpensesListVO nowExpenses = new YearExpensesListVO();
+        nowExpenses.setName("series2");
         for(int i=1;i<=12;i++){
             Boolean chk = true;
             for(YearExpensesVO y : list){
                 if(y.getMonth()==i){
                     chk = false;
-                    result.addData(y.getSum());
+                    nowExpenses.addData(y.getSum());
                 }
             }
             if(chk){
-                result.addData(0);
+                nowExpenses.addData(0);
             }
             
         }
-        YearExpensesListVO result2 = new YearExpensesListVO();
-        result2.setName("series2");
+        YearExpensesListVO pastExpeses = new YearExpensesListVO();
+        pastExpeses.setName("series1");
         for(int i=1;i<=12;i++){
             Boolean chk = true;
             for(YearExpensesVO y : pastList){
                 if(y.getMonth()==i){
                     chk = false;
-                    result2.addData(y.getSum());
+                    pastExpeses.addData(y.getSum());
                 }
             }
             if(chk){
-                result2.addData(0);
+                pastExpeses.addData(0);
             }
             
         }
-        YearExpensesResponseVO finalResult = new YearExpensesResponseVO();
-        finalResult.addList(result);
-        finalResult.addList(result2);
+        List<YearExpensesListVO> finalResult = new ArrayList<>();
+        finalResult.add(pastExpeses);
+        finalResult.add(nowExpenses);
         map.put("data", finalResult);
         map.put("code", HttpStatus.OK);
         return map;

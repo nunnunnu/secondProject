@@ -20,13 +20,11 @@ import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
-import com.secondproject.project.vo.YearExpensesResponseVO;
+import com.secondproject.project.vo.YearExpensesListVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -114,7 +112,7 @@ public class ExpensesDetailController {
     }
     @Operation(summary = "연간 조회", description ="입력받은 년도의 금액과(null일시 올해) 전 해의 월별 총 합계를 출력합니다.")
     @GetMapping("/year/{seq}")
-    public ResponseEntity<YearExpensesResponseVO> getYearChart(
+    public ResponseEntity<List<YearExpensesListVO>> getYearChart(
         @Parameter(description = "조회할 년도(null가능)") @RequestParam @Nullable Integer year,
         @Parameter(description = "회원번호") @PathVariable Long seq
     ){
@@ -143,6 +141,6 @@ public class ExpensesDetailController {
 
         Map<String, Object> map = edService.yearShow(search, pastSearch);
 
-        return new ResponseEntity<YearExpensesResponseVO>((YearExpensesResponseVO)map.get("data"), (HttpStatus)map.get("code"));
+        return new ResponseEntity<List<YearExpensesListVO>>((List<YearExpensesListVO>)map.get("data"), (HttpStatus)map.get("code"));
     }
 }
