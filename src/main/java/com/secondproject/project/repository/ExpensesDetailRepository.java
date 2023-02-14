@@ -16,44 +16,19 @@ public interface ExpensesDetailRepository extends JpaRepository<ExpensesDetailEn
     List<ExpensesDetailEntity> findByEdMiSeqAndEdDateBetween(MemberInfoEntity member, LocalDate start, LocalDate end);
 
     List<ExpensesDetailEntity> findByEdMiSeq(MemberInfoEntity member);
+    
+    @Query("SELECT e FROM ExpensesDetailEntity e join fetch e.edMiSeq m join fetch e.edCateSeq c WHERE e.edMiSeq = :member AND e.edCateSeq = :cate")
+    List<ExpensesDetailEntity> findMemberAndCate(@Param("member") MemberInfoEntity member, @Param("cate") CategoryInfoEntity cate);
 
-    @Query("SELECT e FROM ExpensesDetailEntity e join fetch e.edMiSeq m join fetch e.edCateSeq c WHERE e.edMiSeq = :member AND e.edCateSeq = :cateSeq")
-    List<ExpensesDetailEntity> findMemberAndCate(@Param("member") MemberInfoEntity member, @Param("cateSeq") CategoryInfoEntity cateSeq);
+    
+    List<ExpensesDetailEntity> findByEdSeq(ExpensesDetailEntity expenses);
+    List<ExpensesDetailEntity> findByEdCateSeq(CategoryInfoEntity cate);
+    
+    @Query("SELECT e FROM ExpensesDetailEntity e join fetch e.edMiSeq m join fetch e.edCateSeq s WHERE e.edMiSeq = :member AND e.edSeq = :edSeq")
+    ExpensesDetailEntity findMemberAndEdSeq(@Param("member") MemberInfoEntity member, @Param("edSeq") Long edSeq);
 
-    //월별 총 지출금액조회
-//      @Query(value = "select user.id as id, user.name as name, user.phone as phone, json_unquote(json_extract(user.register_info,'$.id')) as registerInfo , str_to_date(json_unquote(json_extract(user.register_info, '$.date')), '%Y-%m-%d') as registerDate, user.dept_id as deptId, dept.name as deptName " +
-//     "from user user " +
-//     "left outer join dept dept on user.dept_id = dept.id " +
-//     "where match (user.name) against (:name in boolean mode) > 0", nativeQuery = true)
-//      List<UserNativeVo> findTest4(@Param("name") String name);
+    // @Query("SELECT e FROM ExpensesDetailEntity e join fetch e.edMiSeq m join fetch e.edSeq c join fetch e.edCateSeq s WHERE e.edMiSeq = :member AND e.edSeq = :edSeq AND e.edCateSeq = :cateSeq")
+    // 자기 자신에서 join fetch 걸면 오류남 -> 서브쿼리는 아직 안되니까 native로 쓰렴 // List로 가져오면
+    // List<ExpensesDetailEntity> findMemberAndEdSeqAndCateSeq(@Param("member") MemberInfoEntity member, @Param("edSeq")ExpensesDetailEntity edSeq, @Param("cateSeq") CategoryInfoEntity cateSeq);
 
-// select mi.mi_seq ,mi.mi_nickname, mi.mi_email,
-// date_format(ed_date, '%y-%m') m, sum(ed_amount) 
-// from expenses_detail ed 
-// left join member_info mi on mi.mi_seq = ed.ed_mi_seq 
-// where ed_mi_seq = 1 
-// group by m order by m desc;
-
-// @Query(
-//     value = "select new com.greenart.firstproject.vo.localadmin.LocalMarketOptionStockVO(ms.seq, oi.product.name, oi.option, oi.price, ms.stock) from OptionInfoEntity oi left join MarketStockEntity ms on ms.option.seq = oi.seq and ms.market.seq = :marketInfoSeq"
-//     )
-// List<LocalMarketOptionStockVO> getOptionList(@Param("marketInfoSeq") Long marketInfoSeq);
-
-// @Query(value = "SELECT new com.greenart.firstproject.vo.superadmin.AdminUserVO(u.seq, u.name, u.email, u.nickname, u.birth, u.phone, u.address, u.status, u.regDt) FROM UserEntity u WHERE u.seq = :seq")
-// AdminUserVO findAdminUserVOBySeq(@Param("seq") Long seq);
-
-// @Query(
-//     value = "select new com.secondproject.project.vo.ExpensesDetailListVO(mi.miSeq, mi.miNickName, mi.miEmail, edMonthDate(date_format(ed_date, '%y-%m')), edTotalAmount(sum(ed_amount))) from ExpensesDetailEntity ed left join MemberInfoEntity mi on mi.miSeq = ed.edMiSeq =: miSeq"
-//     )
-//     List<ExpensesDetailListVO> getExpensesMonthList(@Param("miSeq") Long miSeq);
-
-// List<DailyExpensesVO> dailyExpenses(DailyExpensesSearchVO search);
-    // 월간 지출내역 수정중
-    // @Query(value =
-    // "select mi.mi_seq as seq, mi.mi_nickname as nickname, date_format(ed_date,'%y-%m') as eddate, sum(ed_amout) as edamount"
-    // +"from expenses_detail ed "
-    // +"left join member_info mi on mi.mi_seq = ed.ed_mi_seq"
-    // +"where ed_mi_seq = miseq"
-    // , nativeQuery = true)
-    // List<ExpensesMonthVO> searchMonth(@Param("miseq") Long miSeq);
 }

@@ -1,7 +1,5 @@
 package com.secondproject.project;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -61,6 +59,22 @@ class hyeonjuTest {
     @Test
     @Transactional
     void 지출수정() {
+        MemberInfoEntity member = mRepo.findAll().get(0);
+        CategoryInfoEntity cate = cateRepo.findAll().get(0);
+        String originTitle = "등록";
+        List<ExpensesDetailEntity> expenses = edRepo.findMemberAndCate(member, cate);
+        ExpensesDetailEntity newExpenses = ExpensesDetailEntity.builder()
+        .edMiSeq(member)
+        .edAmount(55000)
+        .edCateSeq(cateRepo.findById(1L).get())
+        .edTitle(originTitle)
+        .edDate(LocalDate.now())
+        .build();
         
+        newExpenses = edRepo.save(newExpenses);
+        newExpenses.updateExpensesDetailEntity("수정", LocalDate.now(), 77000, cate);
+        newExpenses = edRepo.save(newExpenses);
+        System.out.println(newExpenses);
+        Assertions.assertThat(newExpenses.getEdTitle()).isNotEqualTo(originTitle);
     }
 }
