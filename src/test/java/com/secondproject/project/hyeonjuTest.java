@@ -77,4 +77,8 @@ class hyeonjuTest {
         System.out.println(newExpenses);
         Assertions.assertThat(newExpenses.getEdTitle()).isNotEqualTo(originTitle);
     }
+
+    void 내역조회(){
+        
+    }
 }
