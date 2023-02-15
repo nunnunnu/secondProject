@@ -21,6 +21,7 @@ import com.secondproject.project.repository.BoardInfoRepository;
 import com.secondproject.project.repository.CommentLikesRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
+import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.board.BoardDetailShowVO;
 import com.secondproject.project.vo.board.BoardShowVO;
 import com.secondproject.project.vo.board.BoardUpdateVO;
@@ -38,20 +39,20 @@ public class BoardService {
     private final FileService fService;
     private final CommentLikesRepository clRepo;
 
-    public Map<String, Object> addBoard(Long memberSeq, BoardinsertVO data, MultipartFile... file){
-        Map<String, Object> map = new LinkedHashMap<>();
+    public MapVO addBoard(Long memberSeq, BoardinsertVO data, MultipartFile... file){
+        MapVO map = new MapVO();
         System.out.println(data);
         MemberInfoEntity member = miRepo.findById(memberSeq).orElse(null);
         if(member==null){
-            map.put("status", false);
-            map.put("message", "회원번호 오류입니다.");
-            map.put("status", HttpStatus.BAD_REQUEST);
+            map.setStatus(false);
+            map.setMessage("회원번호 오류입니다.");
+            map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
         if(data.getDetail()==null || data.getTitle()==null){
-            map.put("status", false);
-            map.put("message", "모든 필수 값을 입력해주세요");
-            map.put("code", HttpStatus.BAD_REQUEST);
+            map.setStatus(false);
+            map.setMessage("모든 필수 값을 입력해주세요");
+            map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
         TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
@@ -75,9 +76,9 @@ public class BoardService {
         }
         bimgRepo.saveAll(fileList);
         
-        map.put("status", true);
-        map.put("message", "게시글을 등록하였습니다.");
-        map.put("code", HttpStatus.OK);
+        map.setStatus(true);
+        map.setMessage("게시글을 등록하였습니다.");
+        map.setCode(HttpStatus.OK);
         
         return map;
     }
@@ -101,14 +102,14 @@ public class BoardService {
         if(boardEntity.getBiMiSeq().getMiSeq()!=member.getMiSeq()){
             map.put("status", false);
             map.put("message", "본인이 작성한 글만 수정할수있습니다.");
-            map.put("code", HttpStatus.BAD_REQUEST);
+            map.put("code", HttpStatus.FORBIDDEN);
             return map;
         }
         if(img==null && data.getDetail() == null 
         && data.getTitle()==null && data.getImgSeq().size()==0){ //
             map.put("status", false);
             map.put("message", "변경할 내용이 없습니다.");
-            map.put("code", HttpStatus.BAD_REQUEST);
+            map.put("code", HttpStatus.FORBIDDEN);
             return map;
         }
         if(data.getTitle()!=null){
@@ -165,7 +166,7 @@ public class BoardService {
         if(boardEntity.getBiMiSeq().getMiSeq()!=member.getMiSeq()){
             map.put("status", false);
             map.put("message", "본인이 작성한 글만 수정할수있습니다.");
-            map.put("code", HttpStatus.BAD_REQUEST);
+            map.put("code", HttpStatus.FORBIDDEN);
             return map;
         }
         List<BoardImageEntity> imgs = bimgRepo.findByBimgBiSeq(boardEntity);
@@ -198,7 +199,7 @@ public class BoardService {
         if(board.getBiTaiSeq().getTaiSeq() != target.getTaiSeq()){
             map.put("status", false);
             map.put("message", "조회할 수 없는 구간의 게시글입니다.");
-            map.put("code", HttpStatus.BAD_REQUEST);
+            map.put("code", HttpStatus.FORBIDDEN);
             return map;        
         }
         
@@ -208,9 +209,9 @@ public class BoardService {
 
         biRepo.save(board);
         
-        map.put("status", true);
-        map.put("message", "조회 성공했습니다.");
-        map.put("code", HttpStatus.OK);
+        // map.put("status", true);
+        // map.put("message", "조회 성공했습니다.");
+        // map.put("code", HttpStatus.OK);
         map.put("data", bVo);
 
         return map;
@@ -231,17 +232,17 @@ public class BoardService {
             Page<BoardInfoEntity> boards = biRepo.findByBiTaiSeqOrderByBiRegDtDesc(target, page);
             Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
 
-            map.put("status", true);
-            map.put("message", "해당 구간의 게시글을 조회했습니다");
-            map.put("code", HttpStatus.OK);
+            // map.put("status", true);
+            // map.put("message", "해당 구간의 게시글을 조회했습니다");
+            // map.put("code", HttpStatus.OK);
             map.put("data", result);
         }else{
             Page<BoardInfoEntity> boards = biRepo.findAllByOrderByBiRegDtDesc(page);
             Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
 
-            map.put("status", true);
-            map.put("message", "모든 게시글을 조회했습니다");
-            map.put("code", HttpStatus.OK);
+            // map.put("status", true);
+            // map.put("message", "모든 게시글을 조회했습니다");
+            // map.put("code", HttpStatus.OK);
             map.put("data", result);
 
         }
