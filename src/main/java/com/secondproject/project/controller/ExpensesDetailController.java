@@ -140,7 +140,7 @@ public class ExpensesDetailController {
         }
         map = edService.yearShow(search, pastSearch);
 
-        return new ResponseEntity<>(map, (HttpStatus)map.get("code"));
+        return new ResponseEntity<>(map.get("data"), HttpStatus.OK);
     }
 
     @ApiResponses(value = {

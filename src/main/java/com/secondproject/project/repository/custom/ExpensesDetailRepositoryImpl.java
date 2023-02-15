@@ -6,11 +6,15 @@ import static com.secondproject.project.entity.QExpensesDetailEntity.expensesDet
 import java.util.List;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.entity.QExpensesDetailEntity;
 import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.YearExpensesVO;
+import com.secondproject.project.vo.expenses.UserCompare;
 
 import jakarta.persistence.EntityManager;
 
@@ -76,6 +80,40 @@ public class ExpensesDetailRepositoryImpl implements ExpensesDetailRepositoryCus
                             )
                             .groupBy(expensesDetailEntity.edDate.month())
                             .fetch();              
+    }
+
+//     select avg(ed.ed_amount), ed.ed_cate_seq
+// , (select avg(ed2.ed_amount) from expenses_detail ed2 where ed2.ed_cate_seq = ed.ed_cate_seq and ed2.ed_date between '2023-01-01' and '2023-01-31' and ed2.ed_mi_seq in (1,2,3) group by ed2.ed_cate_seq)  
+// from expenses_detail ed where ed.ed_date between '2023-01-01' and '2023-01-31' and ed.ed_mi_seq =1 group by ed.ed_cate_seq ;
+    @Override
+    public List<UserCompare> userCompareQuery(DailyExpensesSearchVO search, List<MemberInfoEntity> members){
+        QExpensesDetailEntity expensesSub = new QExpensesDetailEntity("expensesSub");
+        // return queryfactory.select(Projections.fields(
+        //                                 expensesDetailEntity.edAmount.avg().as("userAvg"),
+        //                                 categoryInfoEntity.cateSeq.as("seq"),
+        //                                 categoryInfoEntity.cateName.as("cate"),
+        //                                 JPAExpressions
+        //                                     .select(expensesSub.edAmount.avg())
+        //                                     .from(expensesSub)
+        //                                     .where(
+        //                                         expensesSub.edCateSeq.eq(expensesDetailEntity.edCateSeq),
+        //                                         expensesSub.edMiSeq.in(members),
+        //                                         expensesSub.edDate.between(search.getStartDay(), search.getLastDay())
+        //                                     )
+        //                                     .groupBy(expensesDetailEntity.edCateSeq)
+        //                                     .fetch()
+        //                                 )
+                                        
+        //                     )        
+        //                     .from(expensesDetailEntity)
+        //                     .join(expensesDetailEntity.edCateSeq, categoryInfoEntity)
+        //                     .where(
+        //                         expensesDetailEntity.edMiSeq.eq(search.getMember()),
+        //                         expensesDetailEntity.edDate.between(search.getStartDay(), search.getLastDay())
+        //                     )
+        //                     .groupBy(expensesDetailEntity.edCateSeq)
+        //                     .fetch(); 
+        return null;
     }
     
 }

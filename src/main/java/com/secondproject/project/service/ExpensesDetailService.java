@@ -83,41 +83,17 @@ public class ExpensesDetailService {
         List<YearExpensesVO> list = edRepo.yearSum(search);
         List<YearExpensesVO> pastList = edRepo.yearSum(pastSearch);
         
-        YearExpensesListVO nowExpenses = new YearExpensesListVO();
-        nowExpenses.setName("series2");
-        for(int i=1;i<=12;i++){
-            Boolean chk = true;
-            for(YearExpensesVO y : list){
-                if(y.getMonth()==i){
-                    chk = false;
-                    nowExpenses.addData(y.getSum());
-                }
-            }
-            if(chk){
-                nowExpenses.addData(0);
-            }
-            
-        }
-        YearExpensesListVO pastExpeses = new YearExpensesListVO();
-        pastExpeses.setName("series1");
-        for(int i=1;i<=12;i++){
-            Boolean chk = true;
-            for(YearExpensesVO y : pastList){
-                if(y.getMonth()==i){
-                    chk = false;
-                    pastExpeses.addData(y.getSum());
-                }
-            }
-            if(chk){
-                pastExpeses.addData(0);
-            }
-            
-        }
+        YearExpensesListVO nowExpenses = new YearExpensesListVO(list);
+        nowExpenses.setYear(search.getStartDay().getYear());
+        
+        YearExpensesListVO pastExpeses = new YearExpensesListVO(pastList);
+        pastExpeses.setYear(pastSearch.getStartDay().getYear());
+        
         List<YearExpensesListVO> finalResult = new ArrayList<>();
         finalResult.add(pastExpeses);
         finalResult.add(nowExpenses);
         map.put("data", finalResult);
-        map.put("code", HttpStatus.OK);
+        // map.put("code", HttpStatus.OK);
         return map;
     }
     
