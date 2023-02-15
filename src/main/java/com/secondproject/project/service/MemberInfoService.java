@@ -10,19 +10,22 @@ import org.springframework.stereotype.Service;
 import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.vo.MemberAddVO;
+import com.secondproject.project.vo.MemberLoginInfoVO;
 import com.secondproject.project.vo.MemberLoginVO;
+import com.secondproject.project.vo.MemberMoneyUpdateVO;
+import com.secondproject.project.vo.MemberDeleteVO;
 import com.secondproject.project.vo.UpdateMemberVO;
 import com.secondproject.utilities.AESAlgorithm;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class MemberInfoService {
     private final MemberInfoRepository memberInfoRepository;
-
-    public Map<String, Object> addMember(MemberAddVO data) {
+    
+    // 회원가입
+    public Map<String, Object> AddMember(MemberAddVO data) {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();    
         Boolean loginStatus = true;
         String replaceEmail = data.getMiEmail().replaceAll(" ", "");
@@ -107,93 +110,95 @@ public class MemberInfoService {
         return resultMap;
     }
 
-    public Map<String, Object> LoginMember(MemberLoginVO data, HttpSession session) throws Exception {
+    // 회원정보 조회
+    public Map<String, Object> CheckMember(Long member) throws Exception {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        String encPwd = AESAlgorithm.Encrypt(data.getMiPwd());
-        MemberInfoEntity loginUser = memberInfoRepository.findByMiEmailAndMiPwd(data.getMiEmail(), encPwd);
 
-        if (loginUser == null) {
-            resultMap.put("loginStatus", false);
-            resultMap.put("message", "아이디 또는 비밀번호 오류입니다.");
-            resultMap.put("code", HttpStatus.BAD_REQUEST);
-            return resultMap;
-        }
-        else if(loginUser.getMiStatus() == 2) {
-            resultMap.put("loginStatus", false);
-            resultMap.put("message", "탈퇴한 사용자입니다.");
-            resultMap.put("code", HttpStatus.BAD_REQUEST);
-            return resultMap;
-        }
-
-        session.setAttribute("loginUser", new MemberLoginVO(loginUser));
-        resultMap.put("loginStatus", true);
-        resultMap.put("message", "로그인에 성공하였습니다.");
-        resultMap.put("code", HttpStatus.ACCEPTED);
-        resultMap.put("loginUser", loginUser);
-        return resultMap;
-    }
-
-    public Map<String, Object> LogoutMember(HttpSession session) {
-        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        if (session.getAttribute("loginUser") == null) {
-            resultMap.put("loginStatus", false);
-            resultMap.put("message", "회원정보가 없습니다. 로그인 먼저해주세요.");
-            resultMap.put("code", HttpStatus.BAD_REQUEST);
-            return resultMap;
-        }
-        session.invalidate();
-        resultMap.put("loginStatus", true);
-        resultMap.put("message", "로그아웃되었습니다.");
-        resultMap.put("code", HttpStatus.ACCEPTED);
-        return resultMap;
-    }
-
-    public Map<String, Object> DeleteMember(Long miSeq, HttpSession session) throws Exception{
-        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        MemberInfoEntity entity = memberInfoRepository.findById(member).orElse(null);
         
-        if(memberInfoRepository.findByMiSeq(miSeq) == null) {
-            resultMap.put("Status", false);
-            resultMap.put("message", "알맞지 않은 회원번호입니다.");
-            resultMap.put("code", HttpStatus.BAD_REQUEST);
-            return resultMap;  
-        }
-    
-        MemberInfoEntity entity = memberInfoRepository.findById(miSeq).get();
-        if(entity.getMiStatus() == 2) {
-            resultMap.put("Status", false);
-            resultMap.put("message", "이미 탈퇴한 회원입니다.");
-            resultMap.put("code", HttpStatus.BAD_REQUEST);
-            return resultMap;  
-        }
-            entity.setMiStatus(2);
-            memberInfoRepository.save(entity);
-            resultMap.put("Status", "true");
-            resultMap.put("message","탈퇴되었습니다.");
-            resultMap.put("code", HttpStatus.ACCEPTED);
-            return resultMap;
-        }
-    
-    // 총 회원수 조회 (필요시사용)
-    // public Map<String, Object> CountMember(Long data) {
-        // Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        // data = memberInfoRepository.count();
-        // resultMap.put("total_member_num", data);
-        // resultMap.put("status", true);
-        // resultMap.put("code", HttpStatus.ACCEPTED);
-        // return resultMap;
-    // }
-
-    public Map<String, Object> UpdateMember(UpdateMemberVO data2, String type, HttpSession session) throws Exception {
-        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        MemberLoginVO data = (MemberLoginVO) session.getAttribute("loginUser");
-
-        if (session.getAttribute("loginUser") == null) {
+        if(entity == null){
             resultMap.put("status", false);
             resultMap.put("message", "회원정보가 없습니다. 로그인 먼저해주세요.");
             resultMap.put("code", HttpStatus.BAD_REQUEST);
             return resultMap;
         }
-        MemberInfoEntity entity = memberInfoRepository.findById(data.getMiSeq()).get();
+        MemberLoginInfoVO loginInfo = new MemberLoginInfoVO(entity);
+        
+        resultMap.put("Status", true);
+        resultMap.put("message", "조회에 성공했습니다.");
+        resultMap.put("UserInfo", loginInfo);
+        resultMap.put("code", HttpStatus.CREATED);
+        return resultMap;
+    
+    }
+
+    // 로그인
+    public Map<String, Object> LoginMember(MemberLoginVO data) throws Exception {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        String encPwd = AESAlgorithm.Encrypt(data.getMiPwd());
+        MemberInfoEntity loginUser = memberInfoRepository.findByMiEmailAndMiPwd(data.getMiEmail(), encPwd);
+        
+        if(loginUser == null) {
+            resultMap.put("loginStatus", false);
+            resultMap.put("message", "아이디 또는 비밀번호 오류입니다.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;
+        }
+
+        MemberLoginInfoVO loginInfo = new MemberLoginInfoVO(loginUser);
+        if(loginInfo.getMiStatus() == 2) {
+            resultMap.put("loginStatus", false);
+            resultMap.put("message", "탈퇴한 사용자입니다.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;
+        }
+        resultMap.put("loginStatus", true);
+        resultMap.put("message", "로그인에 성공하였습니다.");
+        resultMap.put("code", HttpStatus.ACCEPTED);
+        resultMap.put("loginUser", loginInfo);
+        return resultMap;
+    }
+
+    // 탈퇴
+    public Map<String, Object> DeleteMember(Long miSeq) throws Exception{
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        MemberInfoEntity entity = memberInfoRepository.findById(miSeq).orElse(null);
+        
+        if(entity == null){
+            resultMap.put("status", false);
+            resultMap.put("message", "회원정보가 없습니다. 로그인 먼저해주세요.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;
+        }
+        
+        MemberDeleteVO delMember = new MemberDeleteVO(entity);
+        if(delMember.getMiStatus() == 2) {
+            resultMap.put("Status", false);
+            resultMap.put("message", "이미 탈퇴한 회원입니다.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;  
+        }
+        delMember.setMiStatus(2);
+        entity.setMiStatus(delMember.getMiStatus());
+        memberInfoRepository.save(entity);
+        resultMap.put("Status", "true");
+        resultMap.put("message","탈퇴되었습니다.");
+        resultMap.put("code", HttpStatus.ACCEPTED);
+        return resultMap;
+        }
+
+    // 회원정보 수정
+    public Map<String, Object> UpdateMember(UpdateMemberVO data2, String type, Long memberSeq) throws Exception {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
+        MemberInfoEntity entity = memberInfoRepository.findById(memberSeq).orElse(null);
+        
+        if(entity == null){
+            resultMap.put("status", false);
+            resultMap.put("message", "회원정보가 없습니다.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;
+        }
 
         if (type.equals("nickname")) {
             String nickname_pattern = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*.{2,10}$";
@@ -205,7 +210,7 @@ public class MemberInfoService {
                 resultMap.put("code", HttpStatus.BAD_REQUEST);
                 return resultMap;
             }
-            else if (replaceNickname.equals(data.getMiNickname())) {
+            else if (replaceNickname.equals(entity.getMiNickname())) {
                 resultMap.put("status", "false");
                 resultMap.put("message", "기존 닉네임으로 변경할 수 없습니다.");
                 resultMap.put("code", HttpStatus.BAD_REQUEST);
@@ -236,7 +241,7 @@ public class MemberInfoService {
             String pwd_pattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z])(?=.*[A-Z]).{6,12}$";
             String replacepwd = data2.getMiUpdatePwd().replaceAll(" ", "");
             Pattern d = Pattern.compile(pwd_pattern);
-            String decPwd = AESAlgorithm.Decrypt(data.getMiPwd());
+            String decPwd = AESAlgorithm.Decrypt(entity.getMiPwd());
             if (!data2.getMiPwd().equals(decPwd)) {
                 resultMap.put("message", "기존 비밀번호가 틀렸습니다. 다시 입력해주세요.");
                 resultMap.put("code", HttpStatus.BAD_REQUEST);
@@ -280,34 +285,35 @@ public class MemberInfoService {
     }
 
     // 목표금액 수정
-    public Map<String, Object> UpdateMemberMoney(UpdateMemberVO data2, String type2, HttpSession session) throws Exception {
+    public Map<String, Object> UpdateMemberMoney(MemberMoneyUpdateVO data, Long member) throws Exception {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        MemberLoginVO data = (MemberLoginVO) session.getAttribute("loginUser");
         
-
-        if (session.getAttribute("loginUser") == null) {
+        MemberInfoEntity entity = memberInfoRepository.findById(member).orElse(null);
+        if(entity == null){
             resultMap.put("status", false);
-            resultMap.put("message", "회원정보가 없습니다. 로그인 먼저해주세요.");
+            resultMap.put("message", "회원정보가 없습니다.");
             resultMap.put("code", HttpStatus.BAD_REQUEST);
             return resultMap;
         }
 
-        MemberInfoEntity entity = memberInfoRepository.findById(data.getMiSeq()).get();
-        if (type2.equals("money")) {
-            Integer money = data2.getMiTargetAmount();
-            if(money < 0) {
-                resultMap.put("status", false);
-                resultMap.put("message", "음수값은 입력 할 수 없습니다.");
-                resultMap.put("code", HttpStatus.BAD_REQUEST);
-                return resultMap;
-            }
-            entity.setMiTargetAmount(data2.getMiTargetAmount());
-            memberInfoRepository.save(entity);
-            resultMap.put("status", "true");
-            resultMap.put("message","변경되었습니다.");
-            resultMap.put("code", HttpStatus.ACCEPTED);
+        Integer money = data.getMiTargetAmount();
+        if(money < 0) {
+            resultMap.put("status", false);
+            resultMap.put("message", "음수값은 입력 할 수 없습니다.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
             return resultMap;
         }
+        if(money == data.getMiTargetAmount()) {
+            resultMap.put("status", false);
+            resultMap.put("message", "기존 목표금액과 동일합니다");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;
+        }
+        entity.setMiTargetAmount(data.getMiTargetAmount());
+        memberInfoRepository.save(entity);
+        resultMap.put("status", "true");
+        resultMap.put("message","변경되었습니다.");
+        resultMap.put("code", HttpStatus.ACCEPTED);
         return resultMap;
     }
 }

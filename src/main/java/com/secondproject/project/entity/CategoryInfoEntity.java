@@ -1,5 +1,7 @@
 package com.secondproject.project.entity;
 
+import com.secondproject.project.vo.CategoryExpensesListVO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,4 +26,9 @@ public class CategoryInfoEntity {
     
     @Column(name = "cate_name")
     private String cateName;
+
+    public void CategoryInfoEntity(CategoryExpensesListVO vo) {
+        this.cateSeq = vo.getCateSeq();
+        this.cateName = vo.getCateName();
+    }
 }
