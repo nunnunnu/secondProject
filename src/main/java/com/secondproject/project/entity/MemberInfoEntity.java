@@ -2,6 +2,7 @@ package com.secondproject.project.entity;
 
 import org.hibernate.annotations.DynamicInsert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.secondproject.project.vo.MemberAddVO;
 
 import jakarta.persistence.Column;
@@ -26,15 +27,18 @@ public class MemberInfoEntity {
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mi_seq") 
+    @JsonIgnore
     private Long miSeq;
     
     @Column(name = "mi_email") 
     private String miEmail;
     
     @Column(name = "mi_pwd") 
+    @JsonIgnore
     private String miPwd;
     
-    @Column(name = "mi_token") 
+    @Column(name = "mi_token")
+    @JsonIgnore
     private String miToken;
     
     @Column(name = "mi_sns_type") 
