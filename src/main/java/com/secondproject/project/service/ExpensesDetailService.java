@@ -58,11 +58,9 @@ public class ExpensesDetailService {
         Map<String, Object> map = new LinkedHashMap<>();
         List<CategoryExpensesVO> list =edRepo.CategoryExpenses(search);
         if(list.size()==0){
-            MonthExpensesResponseVO month = new MonthExpensesResponseVO();
             map.put("status", false);
             map.put("message", "등록된 지출 내역이 존재하지 않습니다.");
             map.put("code", HttpStatus.NO_CONTENT);
-            map.put("list", month);
             return map;
         }
         int total = 0;
@@ -229,12 +227,12 @@ public class ExpensesDetailService {
         return map;
     }
 
-    public Map<String, Object> amountRate(MemberInfoEntity member, DailyExpensesSearchVO search){
+    public Map<String, Object> amountRate(DailyExpensesSearchVO search){
         Map<String, Object> map = new LinkedHashMap<String, Object>();
         
         Integer totalSum = edRepo.totalSum(search);
         
-        TargetRateVO result = new TargetRateVO(member.getMiTargetAmount(), totalSum);
+        TargetRateVO result = new TargetRateVO(search.getMember().getMiTargetAmount(), totalSum);
         // map.put("status", true);
         // map.put("message", "조회했습니다.");
         // map.put("code", HttpStatus.OK);
