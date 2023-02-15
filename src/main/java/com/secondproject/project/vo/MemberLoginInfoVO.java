@@ -15,8 +15,6 @@ public class MemberLoginInfoVO {
     private Long miSeq;
     @Schema(description = "회원 이메일")
     private String miEmail;
-    @Schema(description = "회원 토큰")
-    private String miToken;
     @Schema(description = "회원 가입 타입")
     private String miSnsType;
     @Schema(description = "회원 목표금액")
@@ -31,7 +29,6 @@ public class MemberLoginInfoVO {
     public MemberLoginInfoVO(MemberInfoEntity data) {
         this.miSeq = data.getMiSeq();
         this.miEmail = data.getMiEmail();
-        this.miToken = data.getMiToken();
         this.miSnsType = data.getMiSnsType();
         this.miTargetAmount = data.getMiTargetAmount();
         this.miStatus = data.getMiStatus();
