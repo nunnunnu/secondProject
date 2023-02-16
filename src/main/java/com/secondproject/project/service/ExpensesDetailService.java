@@ -1,5 +1,6 @@
 package com.secondproject.project.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
+import com.secondproject.project.vo.MonthListExpensesVO;
 import com.secondproject.project.vo.PlusMinusExpensesVO;
 import com.secondproject.project.vo.PutExpensesVO;
 import com.secondproject.project.vo.YearExpensesListVO;
@@ -124,8 +126,32 @@ public class ExpensesDetailService {
         return cateExpensesList;
     }
 
-    // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP) 
-    
+    // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP)
+
+    public List<DailyExpensesSearchVO> MonthExpensesList(MemberInfoEntity member,LocalDate start, LocalDate end) {
+        List<DailyExpensesSearchVO> monthExpensesList = new ArrayList<>();
+        List<ExpensesDetailEntity> expenses = edRepo.findAll();
+        List<CategoryInfoEntity> cate = cateRepo.findAll();
+        List<ExpensesDetailEntity> MonthExpensesList = edRepo.findByEdMiSeqAndEdDateBetween(member, start, end);
+        
+        for(ExpensesDetailEntity e : MonthExpensesList){
+            monthExpensesList.add(new DailyExpensesSearchVO());
+        }
+        
+        // VO를 리스트로 가져오면 builder에 있는 것을 계속 해서 
+        // 하드코딩으로 변수명 같은 것을 바꿔줘야해서 VO 생성자를 가지고 하는 것이
+        // Service에서 활용도가 높다.
+
+        // MonthListExpensesVO.builder()
+        // .edSeq(MonthExpensesList.getEdSeq())
+        // .edCateSeq(MonthExpensesList.getEdCateSeq())
+        // .edTitle(MonthExpensesList.getEdTitle())
+        // .edAmount(MonthExpensesList.getEdAmount())
+        // .edDate(MonthExpensesList.getEdDate())
+        // .build();
+        
+        return monthExpensesList;
+    }
     
     // 지출입력
     public MapVO putExpensesService(Long miSeq, PutExpensesVO data) {
