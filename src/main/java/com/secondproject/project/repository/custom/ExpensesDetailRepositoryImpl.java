@@ -2,9 +2,12 @@ package com.secondproject.project.repository.custom;
 
 import static com.secondproject.project.entity.QCategoryInfoEntity.categoryInfoEntity;
 import static com.secondproject.project.entity.QExpensesDetailEntity.expensesDetailEntity;
+import static com.secondproject.project.entity.QMemberInfoEntity.memberInfoEntity;
 
+import java.math.BigInteger;
 import java.util.List;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -88,32 +91,36 @@ public class ExpensesDetailRepositoryImpl implements ExpensesDetailRepositoryCus
     @Override
     public List<UserCompare> userCompareQuery(DailyExpensesSearchVO search, List<MemberInfoEntity> members){
         QExpensesDetailEntity expensesSub = new QExpensesDetailEntity("expensesSub");
-        // return queryfactory.select(Projections.fields(
-        //                                 expensesDetailEntity.edAmount.avg().as("userAvg"),
-        //                                 categoryInfoEntity.cateSeq.as("seq"),
-        //                                 categoryInfoEntity.cateName.as("cate"),
-        //                                 JPAExpressions
-        //                                     .select(expensesSub.edAmount.avg())
-        //                                     .from(expensesSub)
-        //                                     .where(
-        //                                         expensesSub.edCateSeq.eq(expensesDetailEntity.edCateSeq),
-        //                                         expensesSub.edMiSeq.in(members),
-        //                                         expensesSub.edDate.between(search.getStartDay(), search.getLastDay())
-        //                                     )
-        //                                     .groupBy(expensesDetailEntity.edCateSeq)
-        //                                     .fetch()
-        //                                 )
-                                        
-        //                     )        
-        //                     .from(expensesDetailEntity)
-        //                     .join(expensesDetailEntity.edCateSeq, categoryInfoEntity)
-        //                     .where(
-        //                         expensesDetailEntity.edMiSeq.eq(search.getMember()),
-        //                         expensesDetailEntity.edDate.between(search.getStartDay(), search.getLastDay())
-        //                     )
-        //                     .groupBy(expensesDetailEntity.edCateSeq)
-        //                     .fetch(); 
-        return null;
+        return queryfactory.select(Projections.constructor(
+                                        UserCompare.class,
+                                        expensesDetailEntity.edAmount.sum(),
+                                        categoryInfoEntity.cateName,
+                                            JPAExpressions.select(expensesSub.edAmount.sum().divide(expensesSub.edMiSeq.countDistinct()))
+                                                            .from(expensesSub)
+                                                            .where(
+                                                                memberEq(members),
+                                                                expensesSub.edDate.between(search.getStartDay(), search.getLastDay()),
+                                                                expensesSub.edCateSeq.eq(expensesDetailEntity.edCateSeq)
+                                                            )
+                                    )
+                            )
+                            .from(expensesDetailEntity)
+                            .join(expensesDetailEntity.edCateSeq, categoryInfoEntity)
+                            .where(
+                                expensesDetailEntity.edMiSeq.eq(search.getMember()),
+                                expensesDetailEntity.edDate.between(search.getStartDay(), search.getLastDay())
+                            )
+                            .groupBy(expensesDetailEntity.edCateSeq)
+                            .fetch(); 
+        // return null;
+    }
+    private BooleanBuilder memberEq(List<MemberInfoEntity> member) {
+        QExpensesDetailEntity expensesSub = new QExpensesDetailEntity("expensesSub");
+        BooleanBuilder builder = new BooleanBuilder();
+        for(MemberInfoEntity m : member){
+            builder.or( expensesSub.edMiSeq.miSeq.castToNum(Integer.class).eq(Long.valueOf(m.getMiSeq()).intValue()));
+        }
+        return builder;
     }
     
 }

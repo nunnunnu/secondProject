@@ -12,10 +12,12 @@ import org.springframework.util.StringUtils;
 import com.secondproject.project.entity.CategoryInfoEntity;
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.vo.CategoryExpensesListVO;
+import com.secondproject.project.repository.TargerAreaInfoRepository;
 import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
@@ -26,6 +28,7 @@ import com.secondproject.project.vo.PutExpensesVO;
 import com.secondproject.project.vo.YearExpensesListVO;
 import com.secondproject.project.vo.YearExpensesVO;
 import com.secondproject.project.vo.expenses.TargetRateVO;
+import com.secondproject.project.vo.expenses.UserCompare;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -34,6 +37,7 @@ public class ExpensesDetailService {
     private final MemberInfoRepository mRepo;
     private final ExpensesDetailRepository edRepo;
     private final CategoryInfoRepository cateRepo;
+    private final TargerAreaInfoRepository tRepo;
 
     public Map<String, Object> daily(DailyExpensesSearchVO search, DailyExpensesSearchVO pastSearch){
         Map<String, Object> map = new LinkedHashMap<>();
@@ -129,7 +133,7 @@ public class ExpensesDetailService {
         MapVO map = new MapVO();
         MemberInfoEntity member = mRepo.findById(miSeq).get();
         CategoryInfoEntity cate = cateRepo.findById(data.getCateSeq()).orElse(null);
-        List<ExpensesDetailEntity> expenses = edRepo.findMemberAndCate(member, cate);
+        // List<ExpensesDetailEntity> expenses = edRepo.findMemberAndCate(member, cate); //안씀
         if(cate != null && member != null && data.getEdAmont()!=null && data.getEdtitle() != null) {
             ExpensesDetailEntity newExpenses = ExpensesDetailEntity.builder()
                 .edMiSeq(member)
@@ -252,7 +256,32 @@ public class ExpensesDetailService {
         // map.put("message", "조회했습니다.");
         // map.put("code", HttpStatus.OK);
         map.put("data", result);
-
+        
+        return map;
+    }
+    public Map<String, Object> userCompare(DailyExpensesSearchVO search) {
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        if(search.getMember().getMiTargetAmount()==null){
+            map.put("status", false);
+            map.put("message", "목표 금액이 설정되지않았습니다..");
+            map.put("code", HttpStatus.NO_CONTENT);
+            return map;
+        }
+        TargetAreaInfoEntity target = tRepo.findTarget(search.getMember().getMiTargetAmount());
+        List<MemberInfoEntity> members = mRepo.findByMiTargetAmountBetween(target.getTaiMinCost(), target.getTaiMaxCost());
+        System.out.println(members);
+        List<UserCompare> result = edRepo.userCompareQuery(search, members);
+        if(result.size()==0){
+            map.put("status", false);
+            map.put("message", "입력된 데이터가 없습니다.");
+            map.put("code", HttpStatus.NO_CONTENT);
+            return map;
+        }
+        
+        map.put("status", true);
+        map.put("message", "조회성공");
+        map.put("code", HttpStatus.OK);
+        map.put("data", result);
         return map;
     }
 }
