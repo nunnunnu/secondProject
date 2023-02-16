@@ -25,6 +25,7 @@ import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
 import com.secondproject.project.vo.YearExpensesListVO;
 import com.secondproject.project.vo.expenses.TargetRateVO;
+import com.secondproject.project.vo.expenses.UserCompare;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -114,7 +115,7 @@ public class ExpensesDetailController {
     }
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(array=@ArraySchema(schema = @Schema(implementation = YearExpensesListVO.class)))),
-        @ApiResponse(responseCode = "400", description = "회원번호 오류", content = @Content(array  = @ArraySchema(schema =@Schema(implementation = MapVO.class)))) })
+        @ApiResponse(responseCode = "400", description = "회원번호 오류", content = @Content(schema =@Schema(implementation = MapVO.class))) })
     @Operation(summary = "연간 조회", description ="입력받은 년도의 금액과(null일시 올해) 전 해의 월별 총 합계를 출력합니다.")
     @GetMapping("/year/{seq}")
     public ResponseEntity<Object> getYearChart(
@@ -145,8 +146,8 @@ public class ExpensesDetailController {
 
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = TargetRateVO.class))),
-        @ApiResponse(responseCode = "204", description = "지출내역없음", content = @Content(array=@ArraySchema(schema = @Schema(implementation = MapVO.class)))),
-        @ApiResponse(responseCode = "400", description = "회원번호 오류 or ,month만 입력", content = @Content(array  = @ArraySchema(schema =@Schema(implementation = MapVO.class)))) })
+        @ApiResponse(responseCode = "204", description = "지출내역없음", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류 or ,month만 입력", content = @Content(schema =@Schema(implementation = MapVO.class))) })
     @Operation(summary = "목표금액 사용비율", description ="입력받은 월의 목표금액 사용률을 조회합니다. year과 month가 null일시 현월을 조회합니다.")
     @GetMapping("/target/{seq}")
     public ResponseEntity<Object> targetRate(
@@ -171,6 +172,27 @@ public class ExpensesDetailController {
         
         map = edService.amountRate(search);
 
+        return new ResponseEntity<>(map.get("data"), HttpStatus.OK);
+    }
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(array=@ArraySchema(schema = @Schema(implementation = UserCompare.class)))),
+        @ApiResponse(responseCode = "204", description = "지출내역없음 or 목표금액 설정안함", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류", content = @Content(schema =@Schema(implementation = MapVO.class))) })
+    @Operation(summary = "같은 구간의 회원 별 카테고리 사용량을 비교합니다.", description ="이번 달의 사용량만 비교할 수 있습니다.")
+    @GetMapping("/compare/{seq}")
+    public ResponseEntity<Object> userCompareMyList(@Parameter(description = "회원 번호") @PathVariable("seq") Long member){
+        Map<String, Object> map = new LinkedHashMap<>();
+        DailyExpensesSearchVO search = sService.dateSearch(null, null, member);
+        if(search==null){
+            map.put("status", false);
+            map.put("message", "회원번호 오류.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+        }
+        map = edService.userCompare(search);
+        if(!(Boolean)map.get("status")){
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
         return new ResponseEntity<>(map.get("data"), HttpStatus.OK);
     }
 }
