@@ -1,6 +1,5 @@
 package com.secondproject.project.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -14,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.project.entity.CategoryInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.vo.CategoryExpensesListVO;
 import com.secondproject.project.vo.MapVO;
+import com.secondproject.project.vo.MonthListExpensesVO;
 import com.secondproject.project.vo.PlusMinusExpensesVO;
 import com.secondproject.project.vo.PutExpensesVO;
 
@@ -55,6 +54,10 @@ public class ExpensesAPIController {
     }
 
     // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP)
+    // @GetMapping("/monthList/{seq}")
+    // public ResponseEntity<List<MonthListExpensesVO>> getMonthExpensesList() {
+    //     return new ResponseEntity<List<MonthListExpensesVO>>(edService.MonthExpensesList(miSeq, month), HttpStatus.OK);
+    // }
 
     // 지출 입력
     @Operation(summary = "지출내역 입력", description = "edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000")

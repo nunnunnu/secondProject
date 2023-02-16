@@ -1,6 +1,7 @@
 package com.secondproject.project;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -15,6 +16,8 @@ import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
+import com.secondproject.project.service.ExpensesDetailService;
+import com.secondproject.project.vo.MonthListExpensesVO;
 
 
 
@@ -23,10 +26,24 @@ class hyeonjuTest {
     @Autowired MemberInfoRepository mRepo;
     @Autowired ExpensesDetailRepository edRepo;
     @Autowired CategoryInfoRepository cateRepo;
+    @Autowired ExpensesDetailService edService;
     
     @Test
-    void 월별지출총금액() {
+    void 월별지출리스트() {
+        Integer year = 2022;
+        Integer month = 12;
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = LocalDate.of(year, month, 31);
 
+        MemberInfoEntity member = mRepo.findAll().get(0);
+        List<ExpensesDetailEntity> expenses = edRepo.findByEdMiSeqAndEdDateBetween(member, start, end);
+        List<MonthListExpensesVO> monthExpenses = new ArrayList<>();
+        for(ExpensesDetailEntity e : expenses){
+            monthExpenses.add(new MonthListExpensesVO(e));
+        }
+
+        System.out.println(monthExpenses);
+            
     }
 
     @Test
