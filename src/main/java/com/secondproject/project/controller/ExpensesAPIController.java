@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,11 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.secondproject.project.entity.ExpensesDetailEntity;
+import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
+import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
+import com.secondproject.project.service.SearchService;
 import com.secondproject.project.vo.CategoryExpensesListVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.MonthListExpensesVO;
@@ -35,6 +41,8 @@ public class ExpensesAPIController {
     private final ExpensesDetailService edService;
     private final MemberInfoRepository mRepository;
     private final CategoryInfoRepository cateRepo;
+    private final ExpensesDetailRepository edRepo;
+    private final SearchService sService;
 
     // 지출내역 카테고리선택 내역 조회 - 검색
     // @Operation(summary = "지출내역-카테고리", description = "카테고리 리스트")
@@ -54,10 +62,15 @@ public class ExpensesAPIController {
     }
 
     // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP)
-    // @GetMapping("/monthList/{seq}")
-    // public ResponseEntity<List<MonthListExpensesVO>> getMonthExpensesList() {
-    //     return new ResponseEntity<List<MonthListExpensesVO>>(edService.MonthExpensesList(miSeq, month), HttpStatus.OK);
-    // }
+    @GetMapping("/monthList/{member}")
+    public ResponseEntity<MonthListExpensesVO> getMonthExpensesList(
+        @PathVariable Long member,
+        @RequestParam @Nullable Integer year,
+        @RequestParam @Nullable Integer month
+    ) {
+        MonthListExpensesVO map = edService.MonthExpensesList(member, year, month);
+        return new ResponseEntity<MonthListExpensesVO>(map, HttpStatus.OK);
+    }
 
     // 지출 입력
     @Operation(summary = "지출내역 입력", description = "edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000")

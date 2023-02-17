@@ -32,17 +32,18 @@ class hyeonjuTest {
     void 월별지출리스트() {
         Integer year = 2022;
         Integer month = 12;
-        LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = LocalDate.of(year, month, 31);
-
         MemberInfoEntity member = mRepo.findAll().get(0);
+
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = LocalDate.of(year, month, 31); // controller
+
         List<ExpensesDetailEntity> expenses = edRepo.findByEdMiSeqAndEdDateBetween(member, start, end);
         List<MonthListExpensesVO> monthExpenses = new ArrayList<>();
         for(ExpensesDetailEntity e : expenses){
             monthExpenses.add(new MonthListExpensesVO(e));
-        }
+        } // service
 
-        System.out.println(monthExpenses);
+        System.out.println(monthExpenses); // return monthExpenses
             
     }
 

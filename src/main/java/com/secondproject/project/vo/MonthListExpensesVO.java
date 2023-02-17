@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MonthListExpensesVO {
+    private Long edMiSeq;
     private Long edSeq;
     private String edTitle;
     private Long edCateSeq;
@@ -28,6 +29,7 @@ public class MonthListExpensesVO {
 
     // 월별 사용내역 리스트 뽑으려고 만들어둔 VO생성자
     public MonthListExpensesVO(ExpensesDetailEntity expenses) {
+        this.edMiSeq = expenses.getEdMiSeq().getMiSeq();
         this.edSeq = expenses.getEdSeq();
         this.edTitle = expenses.getEdTitle();
         this.edCateSeq = expenses.getEdSeq();
