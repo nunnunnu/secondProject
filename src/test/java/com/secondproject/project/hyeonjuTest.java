@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.secondproject.project.entity.BoardInfoEntity;
 import com.secondproject.project.entity.CategoryInfoEntity;
+import com.secondproject.project.entity.CommentInfoEntity;
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.repository.BoardInfoRepository;
 import com.secondproject.project.repository.CategoryInfoRepository;
+import com.secondproject.project.repository.CommentInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
@@ -27,6 +31,8 @@ class hyeonjuTest {
     @Autowired ExpensesDetailRepository edRepo;
     @Autowired CategoryInfoRepository cateRepo;
     @Autowired ExpensesDetailService edService;
+    @Autowired CommentInfoRepository comRepo;
+    @Autowired BoardInfoRepository bRepo;
     
     @Test
     void 월별지출리스트() {
@@ -96,7 +102,21 @@ class hyeonjuTest {
         Assertions.assertThat(newExpenses.getEdTitle()).isNotEqualTo(originTitle);
     }
 
-    void 내역조회(){
-        
+    @Test
+    @Transactional
+    void 댓글달기() {
+        MemberInfoEntity member = mRepo.findAll().get(2);
+        BoardInfoEntity board = bRepo.findAll().get(1);
+
+        // List<CommentInfoEntity> data = comRepo.findByMemberInfoEntity(member);
+        CommentInfoEntity newComment = CommentInfoEntity.builder()
+            .memberInfoEntity(member)
+            .boardInfoEntity(board)
+            .ciContent("댓글내용44")
+            .ciRegDt(LocalDate.now())
+            .build();
+
+        comRepo.save(newComment);
+        System.out.println(newComment.getCiContent());
     }
 }

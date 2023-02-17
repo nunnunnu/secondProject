@@ -18,6 +18,9 @@ public interface ExpensesDetailRepository extends JpaRepository<ExpensesDetailEn
     @EntityGraph( attributePaths = {"edCateSeq"})
     List<ExpensesDetailEntity> findByEdMiSeqAndEdDateBetween(MemberInfoEntity member, LocalDate start, LocalDate end);
 
+
+    List<ExpensesDetailEntity> findTop3ByEdMiSeqAndEdDateBetweenOrderByEdDateDesc(MemberInfoEntity member, LocalDate start, LocalDate end);
+
     List<ExpensesDetailEntity> findByEdMiSeq(MemberInfoEntity member);
     //jpql
     @Query("SELECT e FROM ExpensesDetailEntity e join fetch e.edMiSeq m join fetch e.edCateSeq c WHERE e.edMiSeq = :member AND e.edCateSeq = :cate")
