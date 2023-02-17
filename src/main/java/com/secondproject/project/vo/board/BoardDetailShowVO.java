@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.secondproject.project.entity.BoardImageEntity;
 import com.secondproject.project.entity.BoardInfoEntity;
 
@@ -21,7 +22,9 @@ public class BoardDetailShowVO {
     private Integer view;
     private Long likes;
     private Long unLikes;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editDt;
     private List<String> uri = new ArrayList<>();
 
