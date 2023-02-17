@@ -128,16 +128,26 @@ public class ExpensesDetailService {
 
     // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP)
 
-    public List<DailyExpensesSearchVO> MonthExpensesList(MemberInfoEntity member,LocalDate start, LocalDate end) {
-        List<DailyExpensesSearchVO> monthExpensesList = new ArrayList<>();
-        List<ExpensesDetailEntity> expenses = edRepo.findAll();
-        List<CategoryInfoEntity> cate = cateRepo.findAll();
-        List<ExpensesDetailEntity> MonthExpensesList = edRepo.findByEdMiSeqAndEdDateBetween(member, start, end);
+    public MonthListExpensesVO MonthExpensesList(Long miSeq, Integer year, Integer month) {
+        // List<ExpensesDetailEntity> MonthExpensesList = edRepo.findByEdMiSeqAndEdDateBetween(member, year, month);
+        // List<MonthListExpensesVO> monthExpenses = new ArrayList<>();
+
+        // for(ExpensesDetailEntity e : MonthExpensesList){
+        //     monthExpenses.add(new MonthListExpensesVO(e));
+        // }
         
-        for(ExpensesDetailEntity e : MonthExpensesList){
-            monthExpensesList.add(new DailyExpensesSearchVO());
+        MemberInfoEntity member = mRepo.findByMiSeq(miSeq);
+        MonthListExpensesVO monthExpenses =  new MonthListExpensesVO();
+        List<ExpensesDetailEntity> entity = edRepo.findByEdMiSeq(member);
+        List<ExpensesDetailEntity> list = new ArrayList<>();
+        for(int i=0; i<entity.size(); i++){
+            if(year == entity.get(i).getEdDate().getYear() && month == entity.get(i).getEdDate().getMonthValue()) {
+                list.add(entity.get(i));
+            }
         }
-        
+        // MonthListExpensesVO.builder()
+        // .edMiSeq(miSeq)
+        // .edSeq(list.)
         // VO를 리스트로 가져오면 builder에 있는 것을 계속 해서 
         // 하드코딩으로 변수명 같은 것을 바꿔줘야해서 VO 생성자를 가지고 하는 것이
         // Service에서 활용도가 높다.
@@ -150,7 +160,7 @@ public class ExpensesDetailService {
         // .edDate(MonthExpensesList.getEdDate())
         // .build();
         
-        return monthExpensesList;
+        return monthExpenses;
     }
     
     // 지출입력
