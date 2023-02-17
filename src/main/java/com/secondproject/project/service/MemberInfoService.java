@@ -289,6 +289,7 @@ public class MemberInfoService {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
         
         MemberInfoEntity entity = memberInfoRepository.findById(member).orElse(null);
+        
         if(entity == null){
             resultMap.put("status", false);
             resultMap.put("message", "회원정보가 없습니다.");
@@ -300,6 +301,12 @@ public class MemberInfoService {
         if(money < 0) {
             resultMap.put("status", false);
             resultMap.put("message", "음수값은 입력 할 수 없습니다.");
+            resultMap.put("code", HttpStatus.BAD_REQUEST);
+            return resultMap;
+        }
+        else if(money.equals(entity.getMiTargetAmount())) {
+            resultMap.put("status", false);
+            resultMap.put("message", "기존 목표금액과 동일합니다.");
             resultMap.put("code", HttpStatus.BAD_REQUEST);
             return resultMap;
         }

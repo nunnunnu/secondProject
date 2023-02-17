@@ -106,7 +106,7 @@ public class MemberInfoController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "202", description = "목표금액 수정 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
         @ApiResponse(responseCode = "404", description = "목표금액 수정실패(주소 값 오류)", content = @Content(schema = @Schema(implementation = MapVO.class))),
-        @ApiResponse(responseCode = "400", description = "목표금액 수정실패(존재하지 않는 회원번호 입력,음수 값 입력)", content = @Content(schema = @Schema(implementation = MapVO.class)))
+        @ApiResponse(responseCode = "400", description = "목표금액 수정실패(존재하지 않는 회원번호 입력,음수 값 입력,기존 목표금액과 동일)", content = @Content(schema = @Schema(implementation = MapVO.class)))
     })
     @Operation(summary = "회원 목표금액 수정", description ="목표금액을 수정합니다.")
     @PostMapping("/updatemoney/{member}")

@@ -20,8 +20,6 @@ public class MemberAddVO {
     private String miSnsType;
     @Schema(description = "회원 목표금액")
     private Integer miTargetAmount;
-    @Schema(description = "회원 상태 (1:정상[default] / 2:탈퇴)")
-    private Integer miStatus;
     @Schema(description = "회원 닉네임")
     private String miNickname;
     @Schema(description = "회원 성별 (0:선택안함[default] / 1:남 / 2:여)")
