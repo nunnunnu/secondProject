@@ -1,6 +1,5 @@
 package com.secondproject.project.controller;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -30,6 +29,8 @@ import com.secondproject.project.vo.board.BoardinsertVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -100,10 +101,19 @@ public class BoardController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "게시글 목록조회 성공", content = @Content(schema = @Schema(implementation = BoardDetailShowVO.class)))})
-    @Operation(summary = "게시글 목록 조회", description = "게시글 목록 조회입니다. board/show/list/1?page=1 처럼 page만 들어와도됩니다. page 값이 들어오지않으면 1페이지가 조회됩니다.")
-    @PageableAsQueryParam
+    @Operation(summary = "게시글 목록 조회", description = "게시글 목록 조회입니다. board/show/list/1?page=1 처럼 page만 들어와도됩니다. page 값이 들어오지않으면 1페이지가 조회됩니다.",
+    parameters = {
+        @Parameter(in = ParameterIn.QUERY
+                            , description = "페이지번호(0부터 시작), 입력안하면 0페이지 조회"
+                            , name = "page"
+                            , content = @Content(schema = @Schema(type = "integer", defaultValue = "0"))),
+        @Parameter(in = ParameterIn.QUERY
+                            , description = "입력안해도됨. 기본 한 페이지 당 10개 씩"
+                            , name = "size"),
+        @Parameter(in = ParameterIn.QUERY
+                            , description = "입력안해도됨. 기본 최신순정렬"
+                            , name = "sort")
+            })
     @GetMapping("/show/list/{member}")
     public ResponseEntity<Page<BoardShowVO>> getBoard(
         @Parameter(description = "회원번호") @PathVariable Long member,
@@ -127,13 +137,26 @@ public class BoardController {
         @Parameter(description = "타입") @PathVariable String type, 
         @Parameter(description = "회원번호") @PathVariable Long member, 
         @Parameter(description = "게시글번호") @PathVariable Long post
-    ){
-        Map<String, Object> map = bService.likeAndUnlike(type, member, post);
-        
-        return new ResponseEntity<>(map, HttpStatus.OK);        
-    }
+        ){
+            Map<String, Object> map = bService.likeAndUnlike(type, member, post);
+            
+            return new ResponseEntity<>(map, HttpStatus.OK);        
+        }
     @GetMapping("/search/list/{member}")
-    public ResponseEntity<Object> getSearchBoard(
+    @Operation(
+    parameters = {
+        @Parameter(in = ParameterIn.QUERY
+                            , description = "페이지번호(0부터 시작), 입력안하면 0페이지 조회"
+                            , name = "page"
+                            , content = @Content(schema = @Schema(type = "integer", defaultValue = "0"))),
+        @Parameter(in = ParameterIn.QUERY
+                            , description = "입력안해도됨. 기본 한 페이지 당 10개 씩"
+                            , name = "size"),
+        @Parameter(in = ParameterIn.QUERY
+                            , description = "입력안해도됨. 기본 최신순정렬"
+                            , name = "sort")
+            })
+    public ResponseEntity<Page<BoardShowVO>> getSearchBoard(
         @Parameter(description = "회원번호") @PathVariable Long member,
         @Parameter(hidden=true) @PageableDefault(size=10, sort="biRegDt",direction = Sort.Direction.ASC) Pageable page,
         @Parameter(description = "검색어") @RequestParam String keyword
@@ -141,9 +164,9 @@ public class BoardController {
         System.out.println(page);
         Map<String, Object> map = bService.searchBoard(page, keyword, member);
         if(!(boolean)map.get("status")){
-            return new ResponseEntity<>(map, HttpStatus.OK);        
+            return new ResponseEntity<>(null, HttpStatus.OK);        
         }else{
-            return new ResponseEntity<>(map.get("data"), HttpStatus.OK);
+            return new ResponseEntity<Page<BoardShowVO>>((Page<BoardShowVO>)map.get("data"), HttpStatus.OK);
         }
     }
 }
