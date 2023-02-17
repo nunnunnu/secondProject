@@ -32,7 +32,7 @@ public class MonthListExpensesVO {
         this.edMiSeq = expenses.getEdMiSeq().getMiSeq();
         this.edSeq = expenses.getEdSeq();
         this.edTitle = expenses.getEdTitle();
-        this.edCateSeq = expenses.getEdSeq();
+        this.edCateSeq = expenses.getEdCateSeq().getCateSeq();
         this.edCateName = expenses.getEdCateSeq().getCateName();
         this.edDate = expenses.getEdDate();
         this.edAmount = expenses.getEdAmount();

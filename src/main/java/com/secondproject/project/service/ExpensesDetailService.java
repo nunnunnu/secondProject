@@ -1,6 +1,7 @@
 package com.secondproject.project.service;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,8 +18,8 @@ import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
-import com.secondproject.project.vo.CategoryExpensesListVO;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
+import com.secondproject.project.vo.CategoryExpensesListVO;
 import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
@@ -126,43 +127,54 @@ public class ExpensesDetailService {
         return cateExpensesList;
     }
 
-    // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP)
-
-    public MonthListExpensesVO MonthExpensesList(Long miSeq, Integer year, Integer month) {
-        // List<ExpensesDetailEntity> MonthExpensesList = edRepo.findByEdMiSeqAndEdDateBetween(member, year, month);
-        // List<MonthListExpensesVO> monthExpenses = new ArrayList<>();
-
-        // for(ExpensesDetailEntity e : MonthExpensesList){
-        //     monthExpenses.add(new MonthListExpensesVO(e));
-        // }
-        
+    // 지출내역 조회 1차 회원의 한달단위 지출 리스트 Get 
+    public List<MonthListExpensesVO> MonthExpensesList(Long miSeq, Integer year, Integer month) {
+        //  Integer year, Integer month -> localdate start localdate end
+        //  LocalDate firstDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+        //  LocalDate lastedDate = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
         MemberInfoEntity member = mRepo.findByMiSeq(miSeq);
-        MonthListExpensesVO monthExpenses =  new MonthListExpensesVO();
         List<ExpensesDetailEntity> entity = edRepo.findByEdMiSeq(member);
-        List<ExpensesDetailEntity> list = new ArrayList<>();
+            // VO를 리스트로 가져오면 builder에 있는 것을 계속 해서 
+            // 하드코딩으로 변수명 같은 것을 바꿔줘야해서 VO 생성자를 가지고 하는 것이
+            // Service에서 활용도가 높다.
+        List<MonthListExpensesVO> list = new ArrayList<>();
         for(int i=0; i<entity.size(); i++){
             if(year == entity.get(i).getEdDate().getYear() && month == entity.get(i).getEdDate().getMonthValue()) {
-                list.add(entity.get(i));
+                list.add( new MonthListExpensesVO(entity.get(i)));
             }
         }
-        // MonthListExpensesVO.builder()
-        // .edMiSeq(miSeq)
-        // .edSeq(list.)
-        // VO를 리스트로 가져오면 builder에 있는 것을 계속 해서 
-        // 하드코딩으로 변수명 같은 것을 바꿔줘야해서 VO 생성자를 가지고 하는 것이
-        // Service에서 활용도가 높다.
+        // 유효성 검사 하기! null 값이 들어왔을때! controller에 400에러 같은거 api에 붙여주기
 
-        // MonthListExpensesVO.builder()
-        // .edSeq(MonthExpensesList.getEdSeq())
-        // .edCateSeq(MonthExpensesList.getEdCateSeq())
-        // .edTitle(MonthExpensesList.getEdTitle())
-        // .edAmount(MonthExpensesList.getEdAmount())
-        // .edDate(MonthExpensesList.getEdDate())
-        // .build();
-        
-        return monthExpenses;
+        return list;
     }
-    
+    // 선택 월 지출내역 조회 2차 최근 소비내역 3개만 나오게 FINDTOP
+    public List<MonthListExpensesVO> MonthExpensesListTop3(Long miSeq, Integer year, Integer month) {
+        LocalDate start = LocalDate.of(year, month, 1).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = start.with(TemporalAdjusters.lastDayOfMonth());
+
+        MemberInfoEntity member = mRepo.findByMiSeq(miSeq);
+        List<ExpensesDetailEntity> entity = edRepo.findTop3ByEdMiSeqAndEdDateBetweenOrderByEdDateDesc(member, start, end);
+        List<MonthListExpensesVO> list = new ArrayList<>();
+        for(int i=0; i<entity.size(); i++){
+                list.add( new MonthListExpensesVO(entity.get(i)));
+        }
+        return list;
+    }
+
+    // NOW FINDTOP3 현월 지출내역 조회 2차 최근 소비내역 3개만 나오게   
+    public List<MonthListExpensesVO> NowMonthExpensesListTop3(Long miSeq) {
+        LocalDate start = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
+
+        MemberInfoEntity member = mRepo.findByMiSeq(miSeq);
+        List<ExpensesDetailEntity> entity = edRepo.findTop3ByEdMiSeqAndEdDateBetweenOrderByEdDateDesc(member, start, end);
+        List<MonthListExpensesVO> list = new ArrayList<>();
+        for(int i=0; i<entity.size(); i++){
+                list.add( new MonthListExpensesVO(entity.get(i)));
+        }
+        return list;
+    }
+
     // 지출입력
     public MapVO putExpensesService(Long miSeq, PutExpensesVO data) {
         // Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
@@ -190,7 +202,6 @@ public class ExpensesDetailService {
             map.setMessage("필수 입력정보가 누락되었습니다.");
             map.setCode(HttpStatus.BAD_REQUEST);
         }
-
         return map;
     }
 
