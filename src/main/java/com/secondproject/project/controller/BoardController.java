@@ -1,5 +1,6 @@
 package com.secondproject.project.controller;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -114,5 +115,20 @@ public class BoardController {
             return new ResponseEntity<Page<BoardShowVO>>((Page<BoardShowVO>)map.get("data"), HttpStatus.OK);
         }
     }
-    
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "좋아요/싫어요 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류 or 게시글번호 오류 or 타입오류(like/unlike)", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "202", description = "이미 좋아요/싫어요한 게시글", content = @Content(schema = @Schema(implementation = MapVO.class)))
+    })
+    @Operation(summary = "게시글 좋아요/싫어요", description = "게시글의 좋아요/싫어요 기능입니다. type이 like면 좋아요/ unlike면 싫어요입니다.")
+    @PutMapping("/detail/{type}/{member}/{post}")
+    public ResponseEntity<Object> likeAndUnlike(
+        @Parameter(description = "타입") @PathVariable String type, 
+        @Parameter(description = "회원번호") @PathVariable Long member, 
+        @Parameter(description = "게시글번호") @PathVariable Long post
+    ){
+        Map<String, Object> map = bService.likeAndUnlike(type, member, post);
+        
+        return new ResponseEntity<>(map, HttpStatus.OK);        
+    }
 }

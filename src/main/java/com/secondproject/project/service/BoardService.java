@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.secondproject.project.entity.BoardImageEntity;
 import com.secondproject.project.entity.BoardInfoEntity;
+import com.secondproject.project.entity.CommentLikesEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.BoardImageRepository;
@@ -196,7 +197,9 @@ public class BoardService {
             return map;    
         }
         TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
-        if(board.getBiTaiSeq().getTaiSeq() != target.getTaiSeq()){
+        if((board.getBiTaiSeq()!=null && target!=null && board.getBiTaiSeq().getTaiSeq() != target.getTaiSeq())
+            || (board.getBiTaiSeq()==null && target!=null)
+        ){
             map.put("status", false);
             map.put("message", "조회할 수 없는 구간의 게시글입니다.");
             map.put("code", HttpStatus.FORBIDDEN);
@@ -204,6 +207,8 @@ public class BoardService {
         }
         
         BoardDetailShowVO bVo = new BoardDetailShowVO(board);
+        bVo.setLikes(clRepo.countByClStatusAndClBiSeq(0, board));
+        bVo.setUnLikes(clRepo.countByClStatusAndClBiSeq(1, board));
 
         board.upView();
 
@@ -224,7 +229,7 @@ public class BoardService {
             map.put("status", false);
             map.put("message", "없는 회원번호입니다.");
             map.put("code", HttpStatus.BAD_REQUEST);
-            map.put("data", null);
+            // map.put("data", null);
             return map;
         }
         if(member.getMiTargetAmount()!=null){
@@ -232,7 +237,7 @@ public class BoardService {
             Page<BoardInfoEntity> boards = biRepo.findByBiTaiSeqOrderByBiRegDtDesc(target, page);
             Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
 
-            // map.put("status", true);
+            map.put("status", true);
             // map.put("message", "해당 구간의 게시글을 조회했습니다");
             // map.put("code", HttpStatus.OK);
             map.put("data", result);
@@ -240,7 +245,7 @@ public class BoardService {
             Page<BoardInfoEntity> boards = biRepo.findAllByOrderByBiRegDtDesc(page);
             Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
 
-            // map.put("status", true);
+            map.put("status", true);
             // map.put("message", "모든 게시글을 조회했습니다");
             // map.put("code", HttpStatus.OK);
             map.put("data", result);
@@ -248,5 +253,49 @@ public class BoardService {
         }
         
         return map;
+    }
+
+    public Map<String, Object> likeAndUnlike(String type, Long memberSeq, Long postSeq) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        MemberInfoEntity member = miRepo.findById(memberSeq).orElse(null);
+        if(member==null){
+            map.put("status", false);
+            map.put("message", "없는 회원번호입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return map;
+        }
+        BoardInfoEntity board = biRepo.findByBiSeq(postSeq);
+        if(board==null){
+            map.put("status", false);
+            map.put("message", "없는 게시글 번호입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return map;    
+        }
+        if(clRepo.countByClMiSeqAndClBiSeq(member, board)>=1){
+            map.put("status", false);
+            map.put("message", "이미 좋아요/싫어요한 게시글입니다.");
+            map.put("code", HttpStatus.ACCEPTED);
+            return map;    
+        }
+        String kind = "";
+        if(type.equals("like")){
+            CommentLikesEntity like = new CommentLikesEntity(null, member, board, 0);
+            clRepo.save(like);
+            kind="좋아요";
+        }else if(type.equals("unlike")){
+            CommentLikesEntity unlike = new CommentLikesEntity(null, member, board, 1);
+            clRepo.save(unlike);
+            kind="싫어요";
+        }else{
+            map.put("status", false);
+            map.put("message", "타입이 잘못되었습니다. (like or unlike)");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return map;     
+        }
+        map.put("status", true);
+        map.put("message", kind+" 성공");
+        map.put("code", HttpStatus.OK);
+        return map;     
+
     }
 }
