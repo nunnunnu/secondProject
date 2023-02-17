@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.secondproject.project.entity.BoardImageEntity;
@@ -297,5 +298,42 @@ public class BoardService {
         map.put("code", HttpStatus.OK);
         return map;     
 
+    }
+
+    //게시글 검색 조회
+    public Map<String, Object> searchBoard(Pageable page, String keyword, Long memberSeq){
+        Map<String, Object> map = new LinkedHashMap<>();
+        if(keyword==null){
+            keyword = "";
+        }
+        MemberInfoEntity member = miRepo.findById(memberSeq).orElse(null);
+        if(member==null){
+            map.put("status", false);
+            map.put("message", "없는 회원번호입니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            // map.put("data", null);
+            return map;
+        }
+        System.out.println(keyword);
+        Page<BoardInfoEntity> boards = null;
+        if(member.getMiTargetAmount()!=null){
+            TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
+            boards = biRepo.findByBiTaiSeqAndBiTitleContains(target, keyword, page);
+        }else{
+            boards = biRepo.findByBiTitleContains(keyword, page);
+        }
+        if(boards.getTotalElements()==0){
+            map.put("status", false);
+            map.put("message", "해당 검색어에 해당하는 게시글이 없습니다.");
+            map.put("code", HttpStatus.NO_CONTENT);
+            return map;  
+        }
+        
+        Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
+        System.out.println(boards.getTotalElements());
+        map.put("status", true);
+        map.put("data", result);
+
+        return map;
     }
 }

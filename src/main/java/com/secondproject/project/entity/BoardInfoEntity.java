@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -53,12 +54,15 @@ public class BoardInfoEntity {
     @Column(name="bi_views") 
     private Integer biViews;
 
+    // @BatchSize(size=20)
     @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bi_tai_seq") 
     private TargetAreaInfoEntity biTaiSeq;
 
+    // @BatchSize(size=20)
     @OneToMany(mappedBy="bimgBiSeq")
     private List<BoardImageEntity> imgs = new ArrayList<>();
     
+    // @BatchSize(size=20)
     @OneToMany(mappedBy="boardInfoEntity")
     private List<CommentInfoEntity> comment = new ArrayList<>();
 

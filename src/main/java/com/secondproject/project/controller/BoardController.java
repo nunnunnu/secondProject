@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -130,5 +131,19 @@ public class BoardController {
         Map<String, Object> map = bService.likeAndUnlike(type, member, post);
         
         return new ResponseEntity<>(map, HttpStatus.OK);        
+    }
+    @GetMapping("/search/list/{member}")
+    public ResponseEntity<Object> getSearchBoard(
+        @Parameter(description = "회원번호") @PathVariable Long member,
+        @Parameter(hidden=true) @PageableDefault(size=10, sort="biRegDt",direction = Sort.Direction.ASC) Pageable page,
+        @Parameter(description = "검색어") @RequestParam String keyword
+    ){
+        System.out.println(page);
+        Map<String, Object> map = bService.searchBoard(page, keyword, member);
+        if(!(boolean)map.get("status")){
+            return new ResponseEntity<>(map, HttpStatus.OK);        
+        }else{
+            return new ResponseEntity<>(map.get("data"), HttpStatus.OK);
+        }
     }
 }

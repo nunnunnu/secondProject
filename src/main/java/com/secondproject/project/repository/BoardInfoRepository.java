@@ -12,15 +12,20 @@ import com.secondproject.project.entity.TargetAreaInfoEntity;
 public interface BoardInfoRepository extends JpaRepository<BoardInfoEntity, Long>{
     BoardInfoEntity findByBiMiSeqAndBiSeq(Long member, Long post);
 
-    @EntityGraph( attributePaths = {"comment"})
+    // @EntityGraph( attributePaths = {"comment"})
     Page<BoardInfoEntity> findByBiTaiSeqOrderByBiRegDtDesc(TargetAreaInfoEntity target, Pageable page);
 
-    @EntityGraph( attributePaths = {"comment"})
+    // @EntityGraph( attributePaths = {"comment"})
     Page<BoardInfoEntity> findAllByOrderByBiRegDtDesc(Pageable page);
     
     @EntityGraph( attributePaths = {"imgs"})
     BoardInfoEntity findByBiSeq(@Param("seq") Long seq);
+    
+    // @EntityGraph( attributePaths = {"comment"})
+    Page<BoardInfoEntity> findByBiTaiSeqAndBiTitleContains(TargetAreaInfoEntity target, String keyword, Pageable page);
 
+    // @EntityGraph( attributePaths = {"comment"})
+    Page<BoardInfoEntity> findByBiTitleContains(String keyword, Pageable page);
 
 
     
