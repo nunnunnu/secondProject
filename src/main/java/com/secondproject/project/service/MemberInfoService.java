@@ -303,12 +303,6 @@ public class MemberInfoService {
             resultMap.put("code", HttpStatus.BAD_REQUEST);
             return resultMap;
         }
-        if(money == data.getMiTargetAmount()) {
-            resultMap.put("status", false);
-            resultMap.put("message", "기존 목표금액과 동일합니다");
-            resultMap.put("code", HttpStatus.BAD_REQUEST);
-            return resultMap;
-        }
         entity.setMiTargetAmount(data.getMiTargetAmount());
         memberInfoRepository.save(entity);
         resultMap.put("status", "true");
