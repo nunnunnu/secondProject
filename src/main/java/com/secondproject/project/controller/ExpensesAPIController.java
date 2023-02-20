@@ -1,5 +1,6 @@
 package com.secondproject.project.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.project.entity.ExpensesDetailEntity;
-import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
@@ -61,15 +60,46 @@ public class ExpensesAPIController {
         return new ResponseEntity<List<CategoryExpensesListVO>>(edService.cateExpensesList(),HttpStatus.OK);
     }
 
-    // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get/ 2차 최근 소비내역 3개만 나오게 FINDTOP)
+    // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get
+    // http://localhost:9898/expenses/monthList/1?year=2022&month=12
+    @Operation(summary = "월별 지출내역 전체조회", description = "member(edMiSeq) : 회원번호, year :년, month :월, *년도와 월 모두 기입해주세요*")
     @GetMapping("/monthList/{member}")
-    public ResponseEntity<MonthListExpensesVO> getMonthExpensesList(
+    public ResponseEntity<List<MonthListExpensesVO>> getMonthExpensesList(
+        @Parameter(description = "회원번호 ex member:1" )
         @PathVariable Long member,
+        @Parameter(description = "year ex:2022" )
         @RequestParam @Nullable Integer year,
+        @Parameter(description = "month ex:1 or 01" )
         @RequestParam @Nullable Integer month
     ) {
-        MonthListExpensesVO map = edService.MonthExpensesList(member, year, month);
-        return new ResponseEntity<MonthListExpensesVO>(map, HttpStatus.OK);
+        List<MonthListExpensesVO> list = edService.MonthExpensesList(member, year, month);
+        return new ResponseEntity<List<MonthListExpensesVO>>(list, HttpStatus.OK);
+    }
+
+    // 지출내역 조회 2차 최근 소비내역 3개만 나오게 FINDTOP)  
+    @Operation(summary = "월간(선택) 최근지출내역 TOP3 조회 !", description = "member(edMiSeq) : 회원번호, year :년, month :월, *년도와 월 모두 기입해주세요* ")
+    @GetMapping("/monthTop3/{member}")
+    public ResponseEntity<List<MonthListExpensesVO>> getMonthTop3ExpensesList(
+        @Parameter(description = "회원번호 ex member:1" )
+        @PathVariable Long member,
+        @Parameter(description = "year ex:2022" )
+        @RequestParam @Nullable Integer year,
+        @Parameter(description = "month ex:1 or 01" )
+        @RequestParam @Nullable Integer month
+    ) {
+        List<MonthListExpensesVO> list = edService.MonthExpensesListTop3(member, year, month);
+        return new ResponseEntity<List<MonthListExpensesVO>>(list, HttpStatus.OK);
+    }
+
+    // NOW FINDTOP3 지출내역 조회 2차 최근 소비내역 3개만 나오게   
+    @Operation(summary = "현월의 최근지출내역 3개만 조회 !", description = "member(edMiSeq) : 회원번호 만 입력하시면 됩니다.")
+    @GetMapping("/NmonthTop3/{member}")
+    public ResponseEntity<List<MonthListExpensesVO>> getNowMonthTop3ExpensesList(
+        @Parameter(description = "회원번호 ex member:1" )
+        @PathVariable Long member
+    ) {
+        List<MonthListExpensesVO> list = edService.NowMonthExpensesListTop3(member);
+        return new ResponseEntity<List<MonthListExpensesVO>>(list, HttpStatus.OK);
     }
 
     // 지출 입력
