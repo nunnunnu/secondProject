@@ -46,7 +46,7 @@ public class MonthExpensesResponseVO {
 
     public void changeRate(Integer lastTotal){
         if(lastTotal!=null){
-            this.rate = (((double)(total - lastTotal)/ lastTotal))*100;
+            this.rate = (((double)(total)/ lastTotal))*100;
         }
     }
 }

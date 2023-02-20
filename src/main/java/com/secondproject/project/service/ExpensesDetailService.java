@@ -316,7 +316,6 @@ public class ExpensesDetailService {
         }
         TargetAreaInfoEntity target = tRepo.findTarget(search.getMember().getMiTargetAmount());
         List<MemberInfoEntity> members = mRepo.findByMiTargetAmountBetween(target.getTaiMinCost(), target.getTaiMaxCost());
-        System.out.println(members);
         List<UserCompare> result = edRepo.userCompareQuery(search, members);
         if(result.size()==0){
             map.put("status", false);

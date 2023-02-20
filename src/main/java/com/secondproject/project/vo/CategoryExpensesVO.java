@@ -21,9 +21,6 @@ public class CategoryExpensesVO {
     private Double rate;
 
     public void countRate(int total){
-        System.out.println(total);
-        System.out.println(price);
-        System.out.println();
         this.rate = ((double)price / (double)total) * 100;
     }
     

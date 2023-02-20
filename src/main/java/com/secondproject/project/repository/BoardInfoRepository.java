@@ -1,5 +1,7 @@
 package com.secondproject.project.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -27,6 +29,4 @@ public interface BoardInfoRepository extends JpaRepository<BoardInfoEntity, Long
     // @EntityGraph( attributePaths = {"comment"})
     Page<BoardInfoEntity> findByBiTitleContains(String keyword, Pageable page);
 
-
-    
 }
