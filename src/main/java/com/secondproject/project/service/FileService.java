@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,17 +31,19 @@ public class FileService {
     private final BoardImageRepository bimgRepo;
     
     public ResponseEntity<Resource> getImage ( @PathVariable String uri, 
-    @PathVariable String type , HttpServletRequest request ) throws Exception { 
-    Path folderLocation = null;
-    String filename = null;
-    // 내보낼 파일의 이름을 만든다. 
-    // 폴더 경로와 파일의 이름을 합쳐서 목표 파일의 경로를 만든다. 
-    
-    folderLocation = Paths.get(board_img_path);
-    filename = bimgRepo.findByBimgUri(uri).getBimgName();
+        HttpServletRequest request ) throws Exception 
+    { 
+        Path folderLocation = null;
+        String filename = null;
+        // 내보낼 파일의 이름을 만든다. 
+        // 폴더 경로와 파일의 이름을 합쳐서 목표 파일의 경로를 만든다. 
+        
+        folderLocation = Paths.get(board_img_path);
+        BoardImageEntity image = bimgRepo.findByBimgName(uri);
+        filename = image.getBimgName();
         String[] split = filename.split("\\.");
         String ext = split[split.length - 1];
-        String exportName = uri + "." + ext;
+        String exportName = image.getBimgUri() + "." + ext;
         
         Path targerFile = folderLocation.resolve(filename); //폴더 경로와 파일의 이름을 합쳐서 목표 파일의 경로 생성
         //다운로드 가능한 형태로 변환하기 위해 Resource객체 생성함

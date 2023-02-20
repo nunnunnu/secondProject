@@ -143,7 +143,7 @@ public class BoardController {
             return new ResponseEntity<>(map, HttpStatus.OK);        
         }
     @GetMapping("/search/list/{member}")
-    @Operation(
+    @Operation(summary = "게시글 검색", description = "게시글의 제목으로 검색하는 기능입니다.",
     parameters = {
         @Parameter(in = ParameterIn.QUERY
                             , description = "페이지번호(0부터 시작), 입력안하면 0페이지 조회"
