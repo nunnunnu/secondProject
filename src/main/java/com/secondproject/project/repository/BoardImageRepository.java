@@ -9,7 +9,7 @@ import com.secondproject.project.entity.BoardInfoEntity;
 
 public interface BoardImageRepository extends JpaRepository<BoardImageEntity, Long> {
 
-    BoardImageEntity findByBimgUri(String uri);
+    BoardImageEntity findByBimgName(String uri);
 
     List<BoardImageEntity> findByBimgBiSeqAndBimgSeqIn(BoardInfoEntity board, List<Long> seqs);
     List<BoardImageEntity> findByBimgBiSeq(BoardInfoEntity board);

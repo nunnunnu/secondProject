@@ -35,7 +35,7 @@ public class BoardDetailShowVO {
         this.regDt = entity.getBiRegDt();
         this.editDt = entity.getBiEditDt();
         for(BoardImageEntity u : entity.getImgs()){
-            uri.add(u.getBimgUri());
+            uri.add(u.getBimgName());
         }
     }
 
