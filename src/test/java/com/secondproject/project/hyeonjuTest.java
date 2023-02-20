@@ -1,6 +1,7 @@
 package com.secondproject.project;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.vo.MonthListExpensesVO;
+import com.secondproject.project.vo.UpperCommentVO;
 
 
 
@@ -113,10 +115,27 @@ class hyeonjuTest {
             .memberInfoEntity(member)
             .boardInfoEntity(board)
             .ciContent("댓글내용44")
-            .ciRegDt(LocalDate.now())
+            .ciRegDt(LocalDateTime.now())
             .build();
 
         comRepo.save(newComment);
         System.out.println(newComment.getCiContent());
+    }
+
+    @Test
+    void 댓글조회() {
+        BoardInfoEntity board = bRepo.findAll().get(2);
+
+        List<CommentInfoEntity> entity = comRepo.findBoard(board); 
+        // 게시글에 일치하는것만 조회
+        List<UpperCommentVO> upperComment = new ArrayList<>();
+        for(CommentInfoEntity c : entity) {
+            UpperCommentVO upperVo = new UpperCommentVO(c);
+            List<CommentInfoEntity> commentEntity = comRepo.findByCommentInfoEntityOrderByCiRegDt(c); 
+            upperVo.commentVo(commentEntity);
+            upperComment.add(upperVo);
+            // vo에 엔티티로 받는 생성자는 내가 생성을 해줘야함            
+        }
+        System.out.println(upperComment);
     }
 }
