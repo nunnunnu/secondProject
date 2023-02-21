@@ -27,7 +27,7 @@ public class CategoryInfoEntity {
     @Column(name = "cate_name")
     private String cateName;
 
-    public void CategoryInfoEntity(CategoryExpensesListVO vo) {
+    public CategoryInfoEntity(CategoryExpensesListVO vo) {
         this.cateSeq = vo.getCateSeq();
         this.cateName = vo.getCateName();
     }

@@ -20,7 +20,7 @@ public interface BoardInfoRepository extends JpaRepository<BoardInfoEntity, Long
     // @EntityGraph( attributePaths = {"comment"})
     Page<BoardInfoEntity> findByBiStatusOrderByBiRegDtDesc(Integer status, Pageable page);
     
-    @EntityGraph( attributePaths = {"imgs"})
+    // @EntityGraph( attributePaths = {"imgs"})
     BoardInfoEntity findByBiSeqAndBiStatus(Long seq, Integer status);
     
     // @EntityGraph( attributePaths = {"comment"})

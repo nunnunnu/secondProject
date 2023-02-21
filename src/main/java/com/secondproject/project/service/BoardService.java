@@ -19,6 +19,7 @@ import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.BoardImageRepository;
 import com.secondproject.project.repository.BoardInfoRepository;
+import com.secondproject.project.repository.CommentInfoRepository;
 import com.secondproject.project.repository.CommentLikesRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
@@ -39,6 +40,7 @@ public class BoardService {
     private final TargerAreaInfoRepository tRepo;
     private final FileService fService;
     private final CommentLikesRepository clRepo;
+    private final CommentInfoRepository ciRepo;
 
     public MapVO addBoard(Long memberSeq, BoardinsertVO data, MultipartFile... file){
         MapVO map = new MapVO();
@@ -170,10 +172,8 @@ public class BoardService {
             map.put("code", HttpStatus.FORBIDDEN);
             return map;
         }
-        List<BoardImageEntity> imgs = bimgRepo.findByBimgBiSeq(boardEntity);
-        if(imgs.size()!=0){
-            bimgRepo.boardDeleteQuery(boardEntity);
-        }
+        bimgRepo.boardDeleteQuery(boardEntity);
+        ciRepo.commentDeleteQuery(boardEntity);
         boardEntity.setBiStatus(1);
         biRepo.save(boardEntity);
         map.put("status", true);
