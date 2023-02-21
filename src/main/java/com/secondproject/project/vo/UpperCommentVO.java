@@ -20,6 +20,7 @@ public class UpperCommentVO {
     private String nickName;
     private String ciContent;
     private LocalDateTime ciRegDt;
+    private Integer ciStatus;
     private List<SubCommentVO> subCommentVO = new ArrayList<>();
 
     public void commentVo( List <CommentInfoEntity> entity) {
@@ -34,5 +35,6 @@ public class UpperCommentVO {
         this.nickName = c.getMemberInfoEntity().getMiNickname();
         this.ciContent = c.getCiContent();
         this.ciRegDt = c.getCiRegDt();
+        this.ciStatus = c.getCiStatus();
 	}
 }
