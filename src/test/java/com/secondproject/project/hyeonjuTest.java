@@ -138,4 +138,18 @@ class hyeonjuTest {
         }
         System.out.println(upperComment);
     }
+
+    @Test
+    @Transactional
+    void 댓글삭제() {
+        // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
+        MemberInfoEntity member = mRepo.findAll().get(1);
+        // BoardInfoEntity board = bRepo.findAll().get(1);
+
+        CommentInfoEntity comment = comRepo.findByCiSeqAndCiStatusAndMemberInfoEntity(1L, 0, member);
+        comment.setCiStatus(1);
+        comRepo.save(comment); // delete에는 @Transactional 없으면 터지고
+        System.out.println(comment.getCiStatus()); // 연관관계 맵핑이 걸려있어서 comment 만 하면 가져올수 없음
+                                                   // 해당하는 get을 가져와야 확인가능
+    }
 }

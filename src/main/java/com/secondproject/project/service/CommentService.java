@@ -14,6 +14,7 @@ import com.secondproject.project.repository.BoardInfoRepository;
 import com.secondproject.project.repository.CommentInfoRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.vo.CommentAddVO;
+import com.secondproject.project.vo.CommentDeleteVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.UpperCommentVO;
 
@@ -87,18 +88,68 @@ public class CommentService {
         
         return map;
     }
+
     // 댓글내역 조회
     public List<UpperCommentVO> commentList(Long biSeq) {
-        BoardInfoEntity board = bRepo.findByBiSeq(biSeq);
-        List<CommentInfoEntity> entity = comRepo.findAll();
+        // 게시글에 일치하는것만 조회 ciStatus가 0정상인 것들만 조회!
+        BoardInfoEntity board = bRepo.findByBiSeqAndBiStatus(biSeq,0);
+        List<CommentInfoEntity> entity = comRepo.findBoard(board);
         List<UpperCommentVO> commentList = new ArrayList<>();
         for(CommentInfoEntity c : entity) {
-            // 게시글에 일치하는것만 조회 ciStatus가 0정상인 것들만 조회!
-            if(c.getCiStatus() == 0) {
-                commentList.add(new UpperCommentVO(c));
-                // vo에 엔티티로 받는 생성자는 내가 생성을 해줘야함
-            }
+            UpperCommentVO upperVo = new UpperCommentVO(c);
+            List<CommentInfoEntity> commentEntity = comRepo.findByCommentInfoEntityOrderByCiRegDt(c);
+            upperVo.commentVo(commentEntity);
+            commentList.add(upperVo);
+            // vo에 엔티티로 받는 생성자는 내가 생성을 해줘야함
         }
         return commentList;
+    }
+
+    // 댓글삭제
+    // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
+    public MapVO deleteComment(Long miSeq, Long ciSeq/*댓글삭제에 필요한 VO 생성*/) {
+        MapVO map = new MapVO();
+        MemberInfoEntity member = miRepo.findById(miSeq).orElse(null);
+        if(member == null) {
+            // miSeq번호가 없거나! 
+            map.setMessage("회원번호 오류입니다.");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            map.setStatus(false);
+            return map;
+        }
+        // if 댓글 정보가 없습니다.
+        CommentInfoEntity comment = comRepo.findByCiSeqAndCiStatusAndMemberInfoEntity(ciSeq, 0, member);
+        if(comment == null)  {
+            map.setMessage("등록된 댓글이 없거나 댓글번호가 잘못되었습니다.");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            map.setStatus(false);
+            return map;
+        }
+        // else if(comment.getCiStatus() == 1 ) {
+        //     map.setMessage("이미 삭제된 댓글입니다.");
+        //     map.setCode(HttpStatus.BAD_REQUEST);
+        //     map.setStatus(false);
+        //     return map;
+        // }
+        // comment의 miSeq가 나의 miSeq와 다르면 내가 작성한 댓글이 아닙니다.
+        // else if(comment.getMemberInfoEntity().getMiSeq() != miSeq ) {
+        //     map.setMessage("내가 작성한 댓글이 아닙니다.");
+        //     map.setCode(HttpStatus.BAD_REQUEST);
+        //     map.setStatus(false);
+        //     return map;
+        // }
+        // else if(comment.getMemberInfoEntity().getMiSeq() == miSeq && comment.getCiStatus() == 1) {
+        //     map.setMessage("내가 이미 삭제한 댓글입니다.");
+        //     map.setCode(HttpStatus.BAD_REQUEST);
+        //     map.setStatus(false);
+        //     return map;
+        // }
+        // comment의 miSeq가 나의 miSeq와 같으면 ciStatus를 1로 바꿈 댓글이 삭제되었습니다.
+        comment.setCiStatus(1);
+        comRepo.save(comment);
+        map.setMessage("댓글을 삭제했습니다.");
+        map.setCode(HttpStatus.ACCEPTED);
+        map.setStatus(true);
+        return map;
     }
 }
