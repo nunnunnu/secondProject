@@ -18,10 +18,10 @@ public interface BoardInfoRepository extends JpaRepository<BoardInfoEntity, Long
     Page<BoardInfoEntity> findByBiTaiSeqOrderByBiRegDtDesc(TargetAreaInfoEntity target, Pageable page);
 
     // @EntityGraph( attributePaths = {"comment"})
-    Page<BoardInfoEntity> findAllByOrderByBiRegDtDesc(Pageable page);
+    Page<BoardInfoEntity> findByBiStatusOrderByBiRegDtDesc(Integer status, Pageable page);
     
     @EntityGraph( attributePaths = {"imgs"})
-    BoardInfoEntity findByBiSeq(@Param("seq") Long seq);
+    BoardInfoEntity findByBiSeqAndBiStatus(Long seq, Integer status);
     
     // @EntityGraph( attributePaths = {"comment"})
     Page<BoardInfoEntity> findByBiTaiSeqAndBiTitleContains(TargetAreaInfoEntity target, String keyword, Pageable page);

@@ -44,17 +44,17 @@ public class BoardTest {
 
         target = tRepo.findTarget(member.getMiTargetAmount());
         
-        newBoard = new BoardInfoEntity(null, member, "@@@테스트글제목", "글내용", LocalDateTime.now(), null, 0, target, null, null);
+        newBoard = new BoardInfoEntity(null, member, "@@@테스트글제목", "글내용", LocalDateTime.now(), null, 0, 0, target, null, null);
         bRepo.save(newBoard);
 
     }
 
     @Test
     public void 게시글등록(){
-        BoardInfoEntity board = new BoardInfoEntity(null, member, "글제목1", "글내용1", LocalDateTime.now(), null, 0, target, null, null);
+        BoardInfoEntity board = new BoardInfoEntity(null, member, "글제목1", "글내용1", LocalDateTime.now(), null, 0, 0, target, null, null);
         bRepo.save(board);
 
-        BoardInfoEntity findBoard = bRepo.findByBiSeq(board.getBiSeq());
+        BoardInfoEntity findBoard = bRepo.findByBiSeqAndBiStatus(board.getBiSeq(),0);
         
         Assertions.assertThat(board.getBiSeq()).isEqualTo(findBoard.getBiSeq());
         
@@ -74,17 +74,17 @@ public class BoardTest {
     }
     @Test
     public void 게시글삭제(){
-        BoardInfoEntity findBoard = bRepo.findByBiSeq(newBoard.getBiSeq());
+        BoardInfoEntity findBoard = bRepo.findByBiSeqAndBiStatus(newBoard.getBiSeq(),0);
         bRepo.delete(findBoard);
         
-        BoardInfoEntity result = bRepo.findByBiSeq(newBoard.getBiSeq());
+        BoardInfoEntity result = bRepo.findByBiSeqAndBiStatus(newBoard.getBiSeq(),0);
         
         assertThat(result).isNull();
     }
     @Test
     public void 게시글조회(){
         Integer view = newBoard.getBiViews();
-        BoardInfoEntity findBoard = bRepo.findByBiSeq(newBoard.getBiSeq());
+        BoardInfoEntity findBoard = bRepo.findByBiSeqAndBiStatus(newBoard.getBiSeq(),0);
         findBoard.upView();
         bRepo.save(findBoard);
         

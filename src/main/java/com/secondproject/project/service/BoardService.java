@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.secondproject.project.entity.BoardImageEntity;
@@ -94,7 +93,7 @@ public class BoardService {
             map.put("code", HttpStatus.BAD_REQUEST);
             return map;
         }
-        BoardInfoEntity boardEntity = biRepo.findById(postSeq).orElse(null);
+        BoardInfoEntity boardEntity = biRepo.findByBiSeqAndBiStatus(postSeq, 0);
         if(boardEntity==null){
             map.put("status", false);
             map.put("message", "없는 게시글 번호입니다.");
@@ -158,7 +157,7 @@ public class BoardService {
             map.put("code", HttpStatus.BAD_REQUEST);
             return map;
         }
-        BoardInfoEntity boardEntity = biRepo.findById(postSeq).orElse(null);
+        BoardInfoEntity boardEntity = biRepo.findByBiSeqAndBiStatus(postSeq,0);
         if(boardEntity==null){
             map.put("status", false);
             map.put("message", "없는 게시글 번호입니다.");
@@ -173,9 +172,10 @@ public class BoardService {
         }
         List<BoardImageEntity> imgs = bimgRepo.findByBimgBiSeq(boardEntity);
         if(imgs.size()!=0){
-            bimgRepo.deleteAllInBatch(imgs);
+            bimgRepo.boardDeleteQuery(boardEntity);
         }
-        biRepo.delete(boardEntity);
+        boardEntity.setBiStatus(1);
+        biRepo.save(boardEntity);
         map.put("status", true);
         map.put("message", "게시글을 삭제했습니다.");
         map.put("code", HttpStatus.OK);
@@ -190,7 +190,7 @@ public class BoardService {
             map.put("code", HttpStatus.BAD_REQUEST);
             return map;
         }
-        BoardInfoEntity board = biRepo.findByBiSeq(postSeq);
+        BoardInfoEntity board = biRepo.findByBiSeqAndBiStatus(postSeq, 0);
         if(board==null){
             map.put("status", false);
             map.put("message", "없는 게시글 번호입니다.");
@@ -243,7 +243,7 @@ public class BoardService {
             // map.put("code", HttpStatus.OK);
             map.put("data", result);
         }else{
-            Page<BoardInfoEntity> boards = biRepo.findAllByOrderByBiRegDtDesc(page);
+            Page<BoardInfoEntity> boards = biRepo.findByBiStatusOrderByBiRegDtDesc(0,page);
             Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
 
             map.put("status", true);
@@ -265,7 +265,7 @@ public class BoardService {
             map.put("code", HttpStatus.BAD_REQUEST);
             return map;
         }
-        BoardInfoEntity board = biRepo.findByBiSeq(postSeq);
+        BoardInfoEntity board = biRepo.findByBiSeqAndBiStatus(postSeq,0);
         if(board==null){
             map.put("status", false);
             map.put("message", "없는 게시글 번호입니다.");
