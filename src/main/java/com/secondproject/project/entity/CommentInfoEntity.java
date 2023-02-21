@@ -2,6 +2,8 @@ package com.secondproject.project.entity;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "comment_info")
 @Builder
+@DynamicInsert
 public class CommentInfoEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ci_seq")
@@ -39,6 +42,9 @@ public class CommentInfoEntity {
 
     @Column(name = "ci_edit_dt")
     private LocalDate ciEditDt;
+
+    @Column(name = "ci_status")
+    private Integer ciStatus;
 
     @JoinColumn(name = "ci_ci_seq")
     @ManyToOne(fetch = FetchType.LAZY)

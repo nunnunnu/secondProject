@@ -1,5 +1,7 @@
 package com.secondproject.project.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -22,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="board_image")
 @Builder
+@DynamicInsert
 public class BoardImageEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="bimg_seq") 
@@ -35,6 +38,9 @@ public class BoardImageEntity {
     
     @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bimg_bi_seq") 
     private BoardInfoEntity bimgBiSeq;
+    
+    @Column(name="bimg_status") 
+    private Integer bimgStatus;
 
 }
 

@@ -54,6 +54,9 @@ public class BoardInfoEntity {
     @Column(name="bi_views") 
     private Integer biViews;
 
+    @Column(name="bi_status") 
+    private Integer biStatus;
+
     // @BatchSize(size=20)
     @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="bi_tai_seq") 
     private TargetAreaInfoEntity biTaiSeq;
