@@ -127,7 +127,7 @@ class hyeonjuTest {
         BoardInfoEntity board = bRepo.findAll().get(2);
 
         List<CommentInfoEntity> entity = comRepo.findBoard(board); 
-        // 게시글에 일치하는것만 조회
+        // 게시글에 일치하는것만 조회 ciStatus가 0정상인 것들만 조회!
         List<UpperCommentVO> upperComment = new ArrayList<>();
         for(CommentInfoEntity c : entity) {
             UpperCommentVO upperVo = new UpperCommentVO(c);
