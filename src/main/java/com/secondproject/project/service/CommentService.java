@@ -87,14 +87,17 @@ public class CommentService {
         
         return map;
     }
-
     // 댓글내역 조회
-    public List<UpperCommentVO> commentList(Long miSeq) {
+    public List<UpperCommentVO> commentList(Long biSeq) {
+        BoardInfoEntity board = bRepo.findByBiSeq(biSeq);
         List<CommentInfoEntity> entity = comRepo.findAll();
         List<UpperCommentVO> commentList = new ArrayList<>();
         for(CommentInfoEntity c : entity) {
-            commentList.add(new UpperCommentVO(c));
-            // vo에 엔티티로 받는 생성자는 내가 생성을 해줘야함
+            // 게시글에 일치하는것만 조회 ciStatus가 0정상인 것들만 조회!
+            if(c.getCiStatus() == 0) {
+                commentList.add(new UpperCommentVO(c));
+                // vo에 엔티티로 받는 생성자는 내가 생성을 해줘야함
+            }
         }
         return commentList;
     }
