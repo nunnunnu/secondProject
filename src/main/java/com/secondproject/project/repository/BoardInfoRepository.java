@@ -29,4 +29,6 @@ public interface BoardInfoRepository extends JpaRepository<BoardInfoEntity, Long
     // @EntityGraph( attributePaths = {"comment"})
     Page<BoardInfoEntity> findByBiTitleContains(String keyword, Pageable page);
 
+    BoardInfoEntity findByBiSeq(Long biSeq);
+
 }
