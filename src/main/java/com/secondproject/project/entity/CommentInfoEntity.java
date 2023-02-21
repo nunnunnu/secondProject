@@ -1,6 +1,7 @@
 package com.secondproject.project.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.DynamicInsert;
 
@@ -38,10 +39,10 @@ public class CommentInfoEntity {
     private String ciContent;
 
     @Column(name = "ci_reg_dt")
-    private LocalDate ciRegDt;
+    private LocalDateTime ciRegDt;
 
     @Column(name = "ci_edit_dt")
-    private LocalDate ciEditDt;
+    private LocalDateTime ciEditDt;
 
     @Column(name = "ci_status")
     private Integer ciStatus;
