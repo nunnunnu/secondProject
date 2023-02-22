@@ -15,6 +15,7 @@ import com.secondproject.project.repository.CommentInfoRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.vo.CommentAddVO;
 import com.secondproject.project.vo.CommentDeleteVO;
+import com.secondproject.project.vo.CommentUpdateVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.UpperCommentVO;
 
@@ -61,7 +62,7 @@ public class CommentService {
         .ciContent(data.getCiContent())
         .ciRegDt(LocalDateTime.now())
         // .ciEditDt(data.getCiEditDt()) 사용자로부터 입력받는게 아니기 때문에
-        // .ciEditDt(LocalDateTime.now()) 나우로 받으면 됨 단, 수정기능이 생겼을 때
+        // .ciEditDt(LocalDateTime.now()) //나우로 받으면 됨 단, 수정기능이 생겼을 때
         .build();
             System.out.println(data.getCiCiseq());
         if(data.getCiCiseq() != null) {
@@ -125,6 +126,7 @@ public class CommentService {
             map.setStatus(false);
             return map;
         }
+        // 굳이 할필요 없어진 부분
         // else if(comment.getCiStatus() == 1 ) {
         //     map.setMessage("이미 삭제된 댓글입니다.");
         //     map.setCode(HttpStatus.BAD_REQUEST);
@@ -152,4 +154,36 @@ public class CommentService {
         map.setStatus(true);
         return map;
     }
+
+    // 댓글수정
+    // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
+    public MapVO updateComment(Long miSeq, Long ciSeq, CommentUpdateVO data) {
+        MapVO map = new MapVO();
+        MemberInfoEntity member = miRepo.findById(miSeq).orElse(null);
+        if(member == null) {
+            // miSeq번호가 없거나! 
+            map.setMessage("회원번호 오류입니다.");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            map.setStatus(false);
+            return map;
+        }
+        // if 댓글 정보가 없습니다.
+        CommentInfoEntity comment = comRepo.findByCiSeqAndMemberInfoEntity(ciSeq, member);
+        if(comment == null)  {
+            map.setMessage("등록된 댓글이 없거나 댓글번호가 잘못되었습니다.");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            map.setStatus(false);
+            return map;
+        }
+        if(!(comment.getCiContent() == null || comment.getCiContent() == "")) {
+            comment.setCiContent(data.getCiContent());
+            comment.setCiEditDt(LocalDateTime.now());
+        }
+        comRepo.save(comment);
+        map.setMessage("댓글이 수정되었습니다.");
+        map.setCode(HttpStatus.ACCEPTED);
+        map.setStatus(true);
+        return map;
+    }
+
 }

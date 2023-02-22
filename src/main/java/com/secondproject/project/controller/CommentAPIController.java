@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.secondproject.project.service.CommentService;
 import com.secondproject.project.vo.CommentAddVO;
-import com.secondproject.project.vo.CommentDeleteVO;
+import com.secondproject.project.vo.CommentUpdateVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.UpperCommentVO;
 
@@ -56,14 +57,30 @@ public class CommentAPIController {
     
     // 댓글삭제
     // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
+    @Operation(summary = "댓글삭제", description = "member : 회원번호, ciSeq : 댓글번호")
     @DeleteMapping("/delete/{member}/{ciSeq}")
     public ResponseEntity<MapVO> deleteComment(
+        @Parameter(description = "회원번호 ex member:1" )
         @PathVariable Long member,
+        @Parameter(description = "댓글번호 ex ciSeq:11" )
         @PathVariable Long ciSeq) {
             MapVO map = commentService.deleteComment(member,ciSeq);
             return new ResponseEntity<MapVO>(map, HttpStatus.OK);
     }
 
+    // 댓글수정
+    @Operation(summary = "댓글수정", description = "member : 회원번호, ciSeq : 댓글번호")
+    @PostMapping("/update/{member}/{ciSeq}")
+    public ResponseEntity<MapVO> updateComment(
+        @Parameter(description = "회원번호 ex member:1" )
+        @PathVariable Long member,
+        @Parameter(description = "댓글번호 ex ciSeq:11" )
+        @PathVariable Long ciSeq, 
+        @RequestBody CommentUpdateVO data
+    ) {
+        MapVO map = commentService.updateComment(member, ciSeq, data);
+        return new ResponseEntity<MapVO>(map, HttpStatus.ACCEPTED);
+    }
     
     
 }
