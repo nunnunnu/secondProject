@@ -2,7 +2,6 @@ package com.secondproject.project.controller;
 
 import java.util.Map;
 
-import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +29,6 @@ import com.secondproject.project.vo.board.BoardinsertVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +47,7 @@ public class BoardController {
         @ApiResponse(responseCode = "200", description = "게시글 등록 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
         @ApiResponse(responseCode = "400", description = "회원번호 오류 또는 필수값 누락", content = @Content(schema = @Schema(implementation = MapVO.class))) })
     @Operation(summary = "게시글 등록", description ="게시글을 등록합니다. (form-data로 보내주세요)")
-    @PutMapping("/add/{seq}")
+    @PostMapping("/add/{seq}")
     public ResponseEntity<MapVO> saveBoard(
         @Parameter(description = "회원 번호") @PathVariable Long seq,
         @Parameter(description = "등록할 게시글 정보") BoardinsertVO data,
