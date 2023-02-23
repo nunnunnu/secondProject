@@ -211,6 +211,7 @@ public class ExpensesDetailService {
         MapVO map = new MapVO();
         MemberInfoEntity member = mRepo.findById(miSeq).orElse(null);
         ExpensesDetailEntity entity = edRepo.findMemberAndEdSeq(member, data.getEdSeq());
+
         // System.out.println(data);
         // 유효성 검사      // 비교할려면 다 가져와서 비교후 넘어가기
         if((data.getEdAmount()==null && data.getEdCateSeq()==null && data.getEdTitle()==null) || data.getEdSeq()==null){
@@ -236,13 +237,18 @@ public class ExpensesDetailService {
             // !StringUtils.hasText  =>이거임 data.getEdTitle() == null || data.getEdTitle == ""
             entity.setEdTitle(data.getEdTitle());
         }
-        else if(data.getEdCateSeq() != null) {
+        if(data.getEdAmount() != null) {
+            entity.setEdAmount(data.getEdAmount());
+        }
+        if(data.getEdCateSeq() != null) {
             CategoryInfoEntity cate = cateRepo.findById(data.getEdCateSeq()).orElse(null);
-
             entity.setEdCateSeq(cate);
         }
-        else if(data.getEdAmount() != null) {
-            entity.setEdAmount(data.getEdAmount());
+        if(data.getEdDate() == null) {
+            entity.setEdDate(LocalDate.now());
+        }
+        if(data.getEdDate() != null) {
+            entity.setEdDate(data.getEdDate());
         }
         edRepo.save(entity);
         
