@@ -26,6 +26,8 @@ public class UpperCommentVO {
     private String ciContent;
     @Schema(description = "댓글등록일")
     private LocalDateTime ciRegDt;
+    @Schema(description = "댓글수정일")
+    private LocalDateTime ciEditDt;
     @Schema(description = "댓글상태 true 정상 false 삭제된것")
     private Boolean viewStatus;
     @Schema(description = "대댓글")
@@ -43,6 +45,7 @@ public class UpperCommentVO {
         this.nickName = c.getMemberInfoEntity().getMiNickname();
         this.ciContent = c.getCiContent();
         this.ciRegDt = c.getCiRegDt();
+        this.ciEditDt = c.getCiEditDt();
         if(c.getCiStatus() == 0) {
             this.viewStatus = true;
         }else {

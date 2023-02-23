@@ -46,7 +46,8 @@ public class CommentAPIController {
 
     // 댓글조회
     // 게시글에 일치하는것만 조회 ciStatus가 0정상인 것들만 조회!
-    @Operation(summary = "게시판 별 댓글+대댓글 내역", description = "댓글 리스트")
+    @Operation(summary = "게시판 별 댓글+대댓글 내역",
+    description = "댓글 리스트 = ciSeq 댓글번호,nickName 닉네임,ciContent 내용,ciRegDt 등록일,ciEditDt 수정일(수정없으면 null),viewStatus 댓글상태")
     @GetMapping("/list/{biSeq}")
     public ResponseEntity<List<UpperCommentVO>> listComment(
         @Parameter(description = "게시판번호 ex biSeq:1" )

@@ -143,10 +143,10 @@ class hyeonjuTest {
     @Transactional
     void 댓글삭제() {
         // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
-        MemberInfoEntity member = mRepo.findAll().get(1);
+        MemberInfoEntity member = mRepo.findAll().get(0);
         // BoardInfoEntity board = bRepo.findAll().get(1);
 
-        CommentInfoEntity comment = comRepo.findByCiSeqAndCiStatusAndMemberInfoEntity(1L, 0, member);
+        CommentInfoEntity comment = comRepo.findByCiSeqAndCiStatusAndMemberInfoEntity(11L, 0, member);
         comment.setCiStatus(1);
         comRepo.save(comment); // delete에는 @Transactional 없으면 터지고
         System.out.println(comment.getCiStatus()); // 연관관계 맵핑이 걸려있어서 comment 만 하면 가져올수 없음
