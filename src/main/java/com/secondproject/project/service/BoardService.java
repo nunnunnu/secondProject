@@ -235,7 +235,7 @@ public class BoardService {
         }
         if(member.getMiTargetAmount()!=null){
             TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
-            Page<BoardInfoEntity> boards = biRepo.findByBiTaiSeqOrderByBiRegDtDesc(target, page);
+            Page<BoardInfoEntity> boards = biRepo.findByBiTaiSeqAndBiStatusOrderByBiRegDtDesc(target, 0,page);
             Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
 
             map.put("status", true);
