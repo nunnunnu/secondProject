@@ -318,7 +318,7 @@ public class BoardService {
         Page<BoardInfoEntity> boards = null;
         if(member.getMiTargetAmount()!=null){
             TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
-            boards = biRepo.findByBiTaiSeqAndBiTitleContains(target, keyword, page);
+            boards = biRepo.findByBiTaiSeqAndBiStatusAndBiTitleContains(target, 0, keyword, page);
         }else{
             boards = biRepo.findByBiTitleContainsAndBiStatus(keyword, page,0);
         }
