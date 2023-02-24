@@ -260,7 +260,7 @@ public class ExpensesDetailService {
             map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
-        if(data.getPiSeq() == null || data.getPiSeq() > 7){
+        if(data.getPiSeq() == null || data.getPiSeq() > payList().size()){
             map.setStatus(false);
             map.setMessage("결제 수단 번호 오류");
             map.setCode(HttpStatus.BAD_REQUEST);
