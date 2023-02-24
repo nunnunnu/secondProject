@@ -115,7 +115,7 @@ public class BoardTest {
     @Test
     public void 게시글검색(){
         Pageable pageable = PageRequest.of(0, 10);
-        Page<BoardInfoEntity> boards = bRepo.findByBiTitleContains("@@@테스트", pageable);
+        Page<BoardInfoEntity> boards = bRepo.findByBiTitleContainsAndBiStatus("@@@테스트", pageable,0);
 
         assertThat(boards.getContent().size()).isEqualTo(1);
 
