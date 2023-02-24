@@ -19,5 +19,6 @@ public class PlusMinusExpensesVO {
     private Long edCateSeq;
     private LocalDate edDate;
     private Integer edAmount;
+    private Long piSeq;
 
 }

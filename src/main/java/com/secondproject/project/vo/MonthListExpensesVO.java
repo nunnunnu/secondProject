@@ -35,6 +35,10 @@ public class MonthListExpensesVO {
     private LocalDate edDate;
     @Schema(description = "지출 금액")
     private Integer edAmount;
+    @Schema(description = "결제 수단번호")
+    private Long edPiSeq;
+    @Schema(description = "결제 수단명")
+    private String edPiName;
 
     // 월별 사용내역 리스트 뽑으려고 만들어둔 VO생성자
     public MonthListExpensesVO(ExpensesDetailEntity expenses) {
@@ -45,5 +49,9 @@ public class MonthListExpensesVO {
         this.edCateName = expenses.getEdCateSeq().getCateName();
         this.edDate = expenses.getEdDate();
         this.edAmount = expenses.getEdAmount();
+        if(expenses.getEdPiSeq()!=null){
+            this.edPiSeq = expenses.getEdPiSeq().getPiSeq();
+            this.edPiName = expenses.getEdPiSeq().getPiName();
+        }
     }
 }
