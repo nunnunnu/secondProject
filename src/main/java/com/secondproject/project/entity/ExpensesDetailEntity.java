@@ -47,10 +47,14 @@ public class ExpensesDetailEntity {
     @Column(name="ed_amount") 
     private Integer edAmount;
 
-    public void updateExpensesDetailEntity(String edTitle, LocalDate edDate, Integer edAmount, CategoryInfoEntity CateSeq){
+    @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="ed_pi_seq")
+    private PaymentInfoEntity edPiSeq;
+
+    public void updateExpensesDetailEntity(String edTitle, LocalDate edDate, Integer edAmount, CategoryInfoEntity CateSeq, PaymentInfoEntity edPiSeq){
         this.edTitle = edTitle;
         this.edDate = edDate;
         this.edAmount = edAmount;
         this.edCateSeq = CateSeq;
+        this.edPiSeq = edPiSeq;
     }
 }

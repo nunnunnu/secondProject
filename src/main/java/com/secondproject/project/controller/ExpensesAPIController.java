@@ -1,6 +1,5 @@
 package com.secondproject.project.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,7 @@ import com.secondproject.project.service.SearchService;
 import com.secondproject.project.vo.CategoryExpensesListVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.MonthListExpensesVO;
+import com.secondproject.project.vo.PaymentListVO;
 import com.secondproject.project.vo.PlusMinusExpensesVO;
 import com.secondproject.project.vo.PutExpensesVO;
 
@@ -58,6 +58,12 @@ public class ExpensesAPIController {
     @GetMapping("/categoryList")
     public ResponseEntity<List<CategoryExpensesListVO>> getCateList() {
         return new ResponseEntity<List<CategoryExpensesListVO>>(edService.cateExpensesList(),HttpStatus.OK);
+    }
+    // 지출내역 결제수단선택 내역 조회
+    @Operation(summary = "지출내역-결제수단", description = "결제수단 리스트 : Try it Out")
+    @GetMapping("/paymentList")
+    public ResponseEntity<List<PaymentListVO>> getPayList() {
+        return new ResponseEntity<List<PaymentListVO>>(edService.payList(),HttpStatus.OK);
     }
 
     // 지출내역 조회 (1차 회원의 한달단위 지출 리스트 Get
@@ -103,7 +109,7 @@ public class ExpensesAPIController {
     }
 
     // 지출 입력
-    @Operation(summary = "지출내역 입력", description = "edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000")
+    @Operation(summary = "지출내역 입력", description = "edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000, piSeq(지출수단번호 null or 0 은 강제로 1이입력됩니다) : 1 ")
     @PutMapping("/insert/{member}")
     public ResponseEntity<MapVO> putExpenses(
         @Parameter(description = "회원번호 ex member:1" )
