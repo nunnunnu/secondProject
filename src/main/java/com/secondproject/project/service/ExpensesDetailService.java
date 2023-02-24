@@ -14,10 +14,12 @@ import org.springframework.util.StringUtils;
 import com.secondproject.project.entity.CategoryInfoEntity;
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.entity.PaymentInfoEntity;
 import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
+import com.secondproject.project.repository.PaymentInfoRepository;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
 import com.secondproject.project.vo.CategoryExpensesListVO;
 import com.secondproject.project.vo.CategoryExpensesVO;
@@ -26,6 +28,7 @@ import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
 import com.secondproject.project.vo.MonthListExpensesVO;
+import com.secondproject.project.vo.PaymentListVO;
 import com.secondproject.project.vo.PlusMinusExpensesVO;
 import com.secondproject.project.vo.PutExpensesVO;
 import com.secondproject.project.vo.YearExpensesListVO;
@@ -41,6 +44,7 @@ public class ExpensesDetailService {
     private final ExpensesDetailRepository edRepo;
     private final CategoryInfoRepository cateRepo;
     private final TargerAreaInfoRepository tRepo;
+    private final PaymentInfoRepository payRepo;
 
     public Map<String, Object> daily(DailyExpensesSearchVO search, DailyExpensesSearchVO pastSearch){
         Map<String, Object> map = new LinkedHashMap<>();
@@ -127,6 +131,18 @@ public class ExpensesDetailService {
         return cateExpensesList;
     }
 
+    // 지출내역 결제수단 리스트
+    public List<PaymentListVO> payList() {
+        List<PaymentListVO> payList = new ArrayList<>();
+        List<PaymentInfoEntity> payEntity = payRepo.findAll();
+        for(PaymentInfoEntity p : payEntity){
+            payList.add(new PaymentListVO(p));
+        }
+        return payList;
+    }
+
+
+
     // 지출내역 조회 1차 회원의 한달단위 지출 리스트 Get 
     public List<MonthListExpensesVO> MonthExpensesList(Long miSeq, Integer year, Integer month) {
         //  Integer year, Integer month -> localdate start localdate end
@@ -178,19 +194,31 @@ public class ExpensesDetailService {
     // 지출입력
     public MapVO putExpensesService(Long miSeq, PutExpensesVO data) {
         // Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        // if(data.getPiSeq()==null){
+        //     data.setPiSeq(1L); // null로 들어오면 강제로1로 들어오게 <<- swagger 집착때무네!!!!!!
+        // }
         MapVO map = new MapVO();
         MemberInfoEntity member = mRepo.findById(miSeq).get();
         CategoryInfoEntity cate = cateRepo.findById(data.getCateSeq()).orElse(null);
+        PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()).orElse(null);
+        if(data.getPiSeq()!=null && pay==null){
+            map.setStatus(false);
+            map.setMessage("결제 수단 번호 오류");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            return map;
+        }
         // List<ExpensesDetailEntity> expenses = edRepo.findMemberAndCate(member, cate); //안씀
         if(cate != null && member != null && data.getEdAmont()!=null && data.getEdtitle() != null) {
+ 
             ExpensesDetailEntity newExpenses = ExpensesDetailEntity.builder()
                 .edMiSeq(member)
                 .edAmount(data.getEdAmont())
                 .edCateSeq(cateRepo.findById(data.getCateSeq()).get())
                 .edTitle(data.getEdtitle())
                 .edDate(data.getEdDate())
+                .edPiSeq(payRepo.findById(data.getPiSeq()).orElse(null)) // 결제수단 수정중
                 .build();
-            edRepo.save(newExpenses);
+                edRepo.save(newExpenses);
             map.setStatus(true);
             map.setMessage("지출내역이 등록되었습니다");
             map.setCode(HttpStatus.OK);
@@ -211,7 +239,6 @@ public class ExpensesDetailService {
         MapVO map = new MapVO();
         MemberInfoEntity member = mRepo.findById(miSeq).orElse(null);
         ExpensesDetailEntity entity = edRepo.findMemberAndEdSeq(member, data.getEdSeq());
-
         // System.out.println(data);
         // 유효성 검사      // 비교할려면 다 가져와서 비교후 넘어가기
         if((data.getEdAmount()==null && data.getEdCateSeq()==null && data.getEdTitle()==null) || data.getEdSeq()==null){
@@ -233,6 +260,12 @@ public class ExpensesDetailService {
             map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
+        if(data.getPiSeq() == null || data.getPiSeq() > 7){
+            map.setStatus(false);
+            map.setMessage("결제 수단 번호 오류");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            return map;
+        }
         if(StringUtils.hasText(data.getEdTitle())) { // null 이 아니라면 save.문이 실행한다.
             // !StringUtils.hasText  =>이거임 data.getEdTitle() == null || data.getEdTitle == ""
             entity.setEdTitle(data.getEdTitle());
@@ -249,6 +282,12 @@ public class ExpensesDetailService {
         }
         if(data.getEdDate() != null) {
             entity.setEdDate(data.getEdDate());
+        }
+
+        if(data.getPiSeq() != null && data.getPiSeq() == 0) { // 결제수단 수정중
+            PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()).orElse(null);
+            //PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()==0?1L:data.getPiSeq()).orElse(null);
+            entity.setEdPiSeq(pay);
         }
         edRepo.save(entity);
         
