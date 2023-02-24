@@ -320,7 +320,7 @@ public class BoardService {
             TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
             boards = biRepo.findByBiTaiSeqAndBiTitleContains(target, keyword, page);
         }else{
-            boards = biRepo.findByBiTitleContains(keyword, page);
+            boards = biRepo.findByBiTitleContainsAndBiStatus(keyword, page,0);
         }
         if(boards.getTotalElements()==0){
             map.put("status", false);

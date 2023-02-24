@@ -159,7 +159,6 @@ public class BoardController {
         @Parameter(hidden=true) @PageableDefault(size=10, sort="biRegDt",direction = Sort.Direction.ASC) Pageable page,
         @Parameter(description = "검색어") @RequestParam String keyword
     ){
-        System.out.println(page);
         Map<String, Object> map = bService.searchBoard(page, keyword, member);
         if(!(boolean)map.get("status")){
             return new ResponseEntity<>(null, HttpStatus.OK);        
