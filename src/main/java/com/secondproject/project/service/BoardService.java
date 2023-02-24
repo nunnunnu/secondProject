@@ -70,7 +70,7 @@ public class BoardService {
                                 .build();
         // BoardInfoEntity entity = new BoardInfoEntity(null, member, data.getTitle(), data.getDetail(), LocalDateTime.now(), null, 0, target);
         biRepo.save(entity);
-        if(file.length!=0){
+        if(file!=null && file.length!=0){
             for(MultipartFile f : file){
                 BoardImageEntity img = fService.saveImageFile(f);
                 img.setBimgBiSeq(entity);
