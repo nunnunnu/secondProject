@@ -1,14 +1,12 @@
 package com.secondproject.project;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.MemberInfoRepository;
@@ -37,7 +35,7 @@ public class minseokTest {
 
         MemberInfoEntity findMember = mRepo.findByMiSeqAndMiStatus(member.getMiSeq(),1);
 
-        Assertions.assertThat(member.getMiSeq()).isEqualTo(findMember.getMiSeq());
+        assertThat(member.getMiSeq()).isEqualTo(findMember.getMiSeq());
     }
 
     @Test
@@ -83,5 +81,6 @@ public class minseokTest {
         MemberInfoEntity loginMember = mRepo.findByMiEmailAndMiPwd("testUser2@test.com", "123456");
         mRepo.save(loginMember);
     }
+
 
 }
