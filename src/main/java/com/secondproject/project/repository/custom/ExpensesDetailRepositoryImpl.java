@@ -2,9 +2,7 @@ package com.secondproject.project.repository.custom;
 
 import static com.secondproject.project.entity.QCategoryInfoEntity.categoryInfoEntity;
 import static com.secondproject.project.entity.QExpensesDetailEntity.expensesDetailEntity;
-import static com.secondproject.project.entity.QMemberInfoEntity.memberInfoEntity;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import com.querydsl.core.BooleanBuilder;
@@ -17,6 +15,7 @@ import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.YearExpensesVO;
+import com.secondproject.project.vo.expenses.SatisfactionVO;
 import com.secondproject.project.vo.expenses.UserCompare;
 
 import jakarta.persistence.EntityManager;
@@ -121,6 +120,23 @@ public class ExpensesDetailRepositoryImpl implements ExpensesDetailRepositoryCus
             builder.or( expensesSub.edMiSeq.miSeq.castToNum(Integer.class).eq(Long.valueOf(m.getMiSeq()).intValue()));
         }
         return builder;
+    }
+
+    @Override
+    public List<SatisfactionVO> satisfactionQuery(DailyExpensesSearchVO search){
+        return queryfactory.select(Projections.fields(
+            SatisfactionVO.class,
+            categoryInfoEntity.cateName.as("cate"),
+            expensesDetailEntity.edSat.avg().as("grade")
+        ))
+        .from(expensesDetailEntity)
+        .join(expensesDetailEntity.edCateSeq, categoryInfoEntity)
+        .where(
+            expensesDetailEntity.edMiSeq.eq(search.getMember()),
+            expensesDetailEntity.edDate.between(search.getStartDay(), search.getLastDay())
+        )
+        .groupBy(expensesDetailEntity.edCateSeq)
+        .fetch();            
     }
     
 }

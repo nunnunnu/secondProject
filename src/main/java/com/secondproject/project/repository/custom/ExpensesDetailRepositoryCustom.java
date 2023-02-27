@@ -7,6 +7,7 @@ import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.DailyExpensesVO;
 import com.secondproject.project.vo.YearExpensesVO;
+import com.secondproject.project.vo.expenses.SatisfactionVO;
 import com.secondproject.project.vo.expenses.UserCompare;
 
 public interface ExpensesDetailRepositoryCustom {
@@ -20,6 +21,6 @@ public interface ExpensesDetailRepositoryCustom {
 
     List<UserCompare> userCompareQuery(DailyExpensesSearchVO search, List<MemberInfoEntity> members);
 
-
+    List<SatisfactionVO> satisfactionQuery(DailyExpensesSearchVO search);
 
 }

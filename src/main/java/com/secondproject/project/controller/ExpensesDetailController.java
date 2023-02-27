@@ -2,7 +2,6 @@ package com.secondproject.project.controller;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.service.SearchService;
@@ -24,6 +22,7 @@ import com.secondproject.project.vo.DailyExpensesSearchVO;
 import com.secondproject.project.vo.MapVO;
 import com.secondproject.project.vo.MonthExpensesResponseVO;
 import com.secondproject.project.vo.YearExpensesListVO;
+import com.secondproject.project.vo.expenses.SatisfactionVO;
 import com.secondproject.project.vo.expenses.TargetRateVO;
 import com.secondproject.project.vo.expenses.UserCompare;
 
@@ -116,7 +115,8 @@ public class ExpensesDetailController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(array=@ArraySchema(schema = @Schema(implementation = YearExpensesListVO.class)))),
         @ApiResponse(responseCode = "400", description = "회원번호 오류", content = @Content(schema =@Schema(implementation = MapVO.class))) })
-    @Operation(summary = "연간 조회", description ="입력받은 년도의 금액과(null일시 올해) 전 해의 월별 총 합계를 출력합니다.")
+    @Operation(summary = "연간 조회", description ="입력받은 년도의 금액과(null일시 올해) 전 해의 월별 총 합계를 출력합니다. "
+        +"입력값이 없다면 현재 월을 조회, 년도만 들어오면 해당 년도 전체조회(일별합계입니다), 년도와 월 모두 들어오면 해당 월을 조회")
     @GetMapping("/year/{seq}")
     public ResponseEntity<Object> getYearChart(
         @Parameter(description = "조회할 년도(null가능)") @RequestParam @Nullable Integer year,
@@ -194,5 +194,35 @@ public class ExpensesDetailController {
             return new ResponseEntity<>(map, HttpStatus.OK);
         }
         return new ResponseEntity<>(map.get("data"), HttpStatus.OK);
+    }
+
+    @GetMapping("/sat/{seq}")
+    @Operation(summary = "지출내역 만족도 조회.", description ="지출한 내역의 만족도를 조회합니다. ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(array=@ArraySchema(schema = @Schema(implementation = SatisfactionVO.class)))),
+        @ApiResponse(responseCode = "204", description = "등록된 지출내역 없음", content = @Content(schema =@Schema(implementation = MapVO.class))) })
+    public ResponseEntity<Object> getSat(
+        @Parameter(description = "조회할 년도(null가능)") @RequestParam @Nullable Integer year,
+        @Parameter(description = "조회할 달(null가능)") @RequestParam @Nullable Integer month,
+        @Parameter(description = "회원번호") @PathVariable Long seq
+    ){
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        DailyExpensesSearchVO search = sService.dateSearch(year, month, seq);
+        if(search==null){
+            map.put("status", false);
+            map.put("message", "회원번호 오류, 또는 월만 입력하셨습니다.");
+            map.put("code", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+        }
+        // MemberInfoEntity member = mRepository.findById(seq).orElse(null);
+        
+        map = edService.satAvg(search);
+        if(!(boolean)map.get("status")){
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(map.get("data"),HttpStatus.OK);
+        }
+        
     }
 }
