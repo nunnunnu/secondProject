@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.secondproject.project.entity.BoardImageEntity;
@@ -53,7 +54,7 @@ public class BoardService {
             return map;
         }
         System.out.println(data);
-        if(data.getDetail()==null || data.getTitle()==null){
+        if(!StringUtils.hasText(data.getDetail()) || !StringUtils.hasText(data.getTitle())){
             map.setStatus(false);
             map.setMessage("모든 필수 값을 입력해주세요");
             map.setCode(HttpStatus.BAD_REQUEST);

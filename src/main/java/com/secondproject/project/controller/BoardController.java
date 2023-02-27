@@ -51,8 +51,8 @@ public class BoardController {
     @PostMapping(value = "/add/{seq}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MapVO> saveBoard(
         @Parameter(description = "회원 번호") @PathVariable Long seq,
-        @Parameter(description = "글 제목") String title,
-        @Parameter(description = "글 내용") String detail,
+        @Parameter(description = "글 제목(필수값입니다. Send empty value 체크해제하고 입력값을 넣어주세요.)", required= true) String title,
+        @Parameter(description = "글 내용(필수값입니다. Send empty value 체크해제하고 입력값을 넣어주세요.)", required= true) String detail,
         // @Parameter(description = "등록할 게시글 정보") BoardinsertVO data,
         @Parameter(description = "게시글에 첨부할 파일(null가능, 같은 변수이름으로 여러개 등록 가능합니다.)") @Nullable MultipartFile... img //폼데이터로 받는 방법임
     ){
