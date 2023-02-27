@@ -1,10 +1,10 @@
-package com.secondproject.project.memberTest;
+// package com.secondproject.project.memberTest;
 
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-public class MemberInfoTest {
+// @SpringBootTest
+// public class MemberInfoTest {
 
     
 
-}
+// }

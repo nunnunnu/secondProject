@@ -21,6 +21,10 @@ import com.secondproject.project.vo.UpperCommentVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +36,9 @@ public class CommentAPIController {
     private final CommentService commentService;
 
     // 댓글등록
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "댓글 등록 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류 또는 필수값 누락", content = @Content(schema = @Schema(implementation = MapVO.class))) })
     @Operation(summary = "댓글등록", description = "member : 회원번호, biSeq : 게시판번호")
     @PutMapping("/add/{member}/{biSeq}")
     public ResponseEntity<MapVO> addComment(
@@ -58,6 +65,10 @@ public class CommentAPIController {
     
     // 댓글삭제
     // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "댓글 삭제 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류 or 댓글번호 오류", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "403", description = "본인이 작성한 댓글 아님", content = @Content(schema = @Schema(implementation = MapVO.class))) })
     @Operation(summary = "댓글삭제", description = "member : 회원번호, ciSeq : 댓글번호")
     @DeleteMapping("/delete/{member}/{ciSeq}")
     public ResponseEntity<MapVO> deleteComment(
@@ -70,6 +81,10 @@ public class CommentAPIController {
     }
 
     // 댓글수정
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "댓글 수정 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류 or 댓글번호 오류", content = @Content(schema = @Schema(implementation = MapVO.class))), 
+        @ApiResponse(responseCode = "403", description = "본인이 작성한 댓글이 아닙니다", content = @Content(schema = @Schema(implementation = MapVO.class))) })
     @Operation(summary = "댓글수정", description = "member : 회원번호, ciSeq : 댓글번호")
     @PostMapping("/update/{member}/{ciSeq}")
     public ResponseEntity<MapVO> updateComment(
