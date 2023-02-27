@@ -16,11 +16,13 @@ import com.secondproject.project.entity.CategoryInfoEntity;
 import com.secondproject.project.entity.CommentInfoEntity;
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.entity.PaymentInfoEntity;
 import com.secondproject.project.repository.BoardInfoRepository;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.CommentInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
+import com.secondproject.project.repository.PaymentInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.vo.MonthListExpensesVO;
 import com.secondproject.project.vo.UpperCommentVO;
@@ -35,6 +37,7 @@ class hyeonjuTest {
     @Autowired ExpensesDetailService edService;
     @Autowired CommentInfoRepository comRepo;
     @Autowired BoardInfoRepository bRepo;
+    @Autowired PaymentInfoRepository pRepo;
     
     @Test
     void 월별지출리스트() {
@@ -87,6 +90,7 @@ class hyeonjuTest {
     void 지출수정() {
         MemberInfoEntity member = mRepo.findAll().get(0);
         CategoryInfoEntity cate = cateRepo.findAll().get(0);
+        PaymentInfoEntity pay = pRepo.findAll().get(1);
         String originTitle = "등록";
         List<ExpensesDetailEntity> expenses = edRepo.findMemberAndCate(member, cate);
         ExpensesDetailEntity newExpenses = ExpensesDetailEntity.builder()
@@ -98,7 +102,7 @@ class hyeonjuTest {
         .build();
         
         newExpenses = edRepo.save(newExpenses);
-        newExpenses.updateExpensesDetailEntity("수정", LocalDate.now(), 77000, cate);
+        newExpenses.updateExpensesDetailEntity("수정", LocalDate.now(), 77000, cate, pay);
         newExpenses = edRepo.save(newExpenses);
         System.out.println(newExpenses);
         Assertions.assertThat(newExpenses.getEdTitle()).isNotEqualTo(originTitle);
