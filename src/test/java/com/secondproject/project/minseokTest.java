@@ -1,16 +1,19 @@
 package com.secondproject.project;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
 
 @SpringBootTest
+@Transactional
 public class minseokTest {
 
     private MemberInfoEntity member;
