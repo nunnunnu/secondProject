@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,12 +48,15 @@ public class BoardController {
         @ApiResponse(responseCode = "200", description = "게시글 등록 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
         @ApiResponse(responseCode = "400", description = "회원번호 오류 또는 필수값 누락", content = @Content(schema = @Schema(implementation = MapVO.class))) })
     @Operation(summary = "게시글 등록", description ="게시글을 등록합니다. (form-data로 보내주세요)")
-    @PostMapping("/add/{seq}")
+    @PostMapping(value = "/add/{seq}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MapVO> saveBoard(
         @Parameter(description = "회원 번호") @PathVariable Long seq,
-        @Parameter(description = "등록할 게시글 정보") BoardinsertVO data,
+        @Parameter(description = "글 제목") String title,
+        @Parameter(description = "글 내용") String detail,
+        // @Parameter(description = "등록할 게시글 정보") BoardinsertVO data,
         @Parameter(description = "게시글에 첨부할 파일(null가능, 같은 변수이름으로 여러개 등록 가능합니다.)") @Nullable MultipartFile... img //폼데이터로 받는 방법임
     ){
+        BoardinsertVO data = new BoardinsertVO(title, detail);
         MapVO map = bService.addBoard(seq, data, img);
 
         return new ResponseEntity<>(map, map.getCode());

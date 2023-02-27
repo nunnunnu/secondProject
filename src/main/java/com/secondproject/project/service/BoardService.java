@@ -52,6 +52,7 @@ public class BoardService {
             map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
+        System.out.println(data);
         if(data.getDetail()==null || data.getTitle()==null){
             map.setStatus(false);
             map.setMessage("모든 필수 값을 입력해주세요");
