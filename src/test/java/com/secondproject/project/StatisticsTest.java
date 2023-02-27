@@ -60,13 +60,13 @@ public class StatisticsTest {
         pRepo.save(pay);
         
 
-        nowExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1), 10000, pay);
-        nowExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now(), 9000, pay);
-        nowExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now(), 11000, pay);
-        pastExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1).minusMonths(1), 5000, pay);
-        pastExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now().minusMonths(1), 4000, pay);
-        pastExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusMonths(1), 6000, pay);
-        LastYearExpense = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusYears(1), 6000, pay);
+        nowExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1), 10000, 7, pay);
+        nowExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now(), 9000, 6, pay);
+        nowExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now(), 11000, 8, pay);
+        pastExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1).minusMonths(1), 5000, 2, pay);
+        pastExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now().minusMonths(1), 4000, 7, pay);
+        pastExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusMonths(1), 6000, 8, pay);
+        LastYearExpense = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusYears(1), 6000, 10, pay);
         edRepo.save(nowExpense);
         edRepo.save(nowExpense2);
         edRepo.save(nowExpense3);

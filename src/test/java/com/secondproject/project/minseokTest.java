@@ -16,7 +16,7 @@ import com.secondproject.project.repository.TargerAreaInfoRepository;
 
 @SpringBootTest
 @Transactional
-public class MinseokTest {
+public class minseokTest {
 
     private MemberInfoEntity member;
     private MemberInfoEntity newMember;
