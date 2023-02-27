@@ -12,5 +12,7 @@ public interface MemberInfoRepository extends JpaRepository<MemberInfoEntity, Lo
     public MemberInfoEntity findByMiEmailAndMiPwd(String miEmail, String miPwd);
     public MemberInfoEntity findByMiSeq(Long miSeq);
 
+    MemberInfoEntity findByMiSeqAndMiStatus(Long seq, Integer status);
+
     List<MemberInfoEntity> findByMiTargetAmountBetween(Integer mimCost, Integer maxCost);
 }
