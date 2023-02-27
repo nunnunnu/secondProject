@@ -29,6 +29,10 @@ import com.secondproject.project.vo.PutExpensesVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -109,7 +113,10 @@ public class ExpensesAPIController {
     }
 
     // 지출 입력
-    @Operation(summary = "지출내역 입력", description = "edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000, piSeq(지출수단번호 값을 입력해야합니다/필요없으면 입력하지 마세요) : 1 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "지출 등록 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류 또는 필수값 누락", content = @Content(schema = @Schema(implementation = MapVO.class))) })
+    @Operation(summary = "지출내역 입력", description = "edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000, /*필수값 아님piSeq(지출수단번호 값을 입력해야합니다/필요없으면 입력하지 마세요) : 1 */")
     @PutMapping("/insert/{member}")
     public ResponseEntity<MapVO> putExpenses(
         @Parameter(description = "회원번호 ex member:1" )
@@ -121,7 +128,11 @@ public class ExpensesAPIController {
 
 
     // 지출 수정 (제목/ 카테고리/ 날짜? null 이면 entity에 dynamic 걸려있어서 시간으로 적어줌/ 금액)
-    @Operation(summary = "지출내역 수정", description = "edSeq(지출내역 번호) : 1, edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000,  piSeq(지출수단번호 값을 입력해야합니다/필요없으면 입력하지 마세요) : 1 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "지출 수정 성공", content = @Content(schema = @Schema(implementation = MapVO.class))),
+        @ApiResponse(responseCode = "400", description = "회원번호 오류", content = @Content(schema = @Schema(implementation = MapVO.class))), 
+        @ApiResponse(responseCode = "403", description = "본인이 작성한 지출내역이 아님", content = @Content(schema = @Schema(implementation = MapVO.class))) })
+    @Operation(summary = "지출내역 수정", description = "edSeq(지출내역 번호) : 1, edtitle(제목) : 제목, cateSeq(카테고리번호) : 1, edDate(작성날짜) : 2023-02-15 or null(현재날짜저장), edAmont(금액) : 15000,/*필수값아님  piSeq(지출수단번호 값을 입력해야합니다/필요없으면 입력하지 마세요) : 1 */")
     @PostMapping("/insert/{member}")
     public ResponseEntity<MapVO> updateExpenses(
         @Parameter(description = "회원번호 ex member:1" )

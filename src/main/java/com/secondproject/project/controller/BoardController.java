@@ -56,6 +56,7 @@ public class BoardController {
         // @Parameter(description = "등록할 게시글 정보") BoardinsertVO data,
         @Parameter(description = "게시글에 첨부할 파일(null가능, 같은 변수이름으로 여러개 등록 가능합니다.)") @Nullable MultipartFile... img //폼데이터로 받는 방법임
     ){
+        // System.out.println("이미지:"+img);
         BoardinsertVO data = new BoardinsertVO(title, detail);
         MapVO map = bService.addBoard(seq, data, img);
 
