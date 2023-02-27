@@ -26,7 +26,7 @@ public class BoardDetailShowVO {
     private LocalDateTime regDt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editDt;
-    private List<String> uri = new ArrayList<>();
+    private List<ImageVO> uri = new ArrayList<>();
 
     public BoardDetailShowVO(BoardInfoEntity entity){
         this.title = entity.getBiTitle();
@@ -35,7 +35,7 @@ public class BoardDetailShowVO {
         this.regDt = entity.getBiRegDt();
         this.editDt = entity.getBiEditDt();
         for(BoardImageEntity u : entity.getImgs()){
-            uri.add(u.getBimgName());
+            uri.add(new ImageVO(u.getBimgSeq(), u.getBimgName()));
         }
     }
 
