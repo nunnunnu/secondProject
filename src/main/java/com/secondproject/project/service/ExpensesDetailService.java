@@ -33,6 +33,7 @@ import com.secondproject.project.vo.PlusMinusExpensesVO;
 import com.secondproject.project.vo.PutExpensesVO;
 import com.secondproject.project.vo.YearExpensesListVO;
 import com.secondproject.project.vo.YearExpensesVO;
+import com.secondproject.project.vo.expenses.SatisfactionVO;
 import com.secondproject.project.vo.expenses.TargetRateVO;
 import com.secondproject.project.vo.expenses.UserCompare;
 
@@ -406,6 +407,21 @@ public class ExpensesDetailService {
         map.put("data", result);
         return map;
     }
+    public Map<String, Object> satAvg(DailyExpensesSearchVO search){
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        List<SatisfactionVO> list = edRepo.satisfactionQuery(search);
+        if(list.size()==0){
+            map.put("status", false);
+            map.put("message", "입력된 지출내역이 없습니다.");
+            map.put("code", HttpStatus.OK);
+            return map;
+        }
 
+        map.put("status", true);
+        map.put("message", "조회성공");
+        map.put("code", HttpStatus.OK);
+        map.put("data", list);
+        return map;
+    }
 
 }
