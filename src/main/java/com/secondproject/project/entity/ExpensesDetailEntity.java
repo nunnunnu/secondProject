@@ -47,6 +47,9 @@ public class ExpensesDetailEntity {
     @Column(name="ed_amount") 
     private Integer edAmount;
 
+    @Column(name="ed_sat") 
+    private Integer edSat;
+
     @ManyToOne(fetch = FetchType.LAZY) @JsonIgnore @JoinColumn(name="ed_pi_seq")
     private PaymentInfoEntity edPiSeq;
 

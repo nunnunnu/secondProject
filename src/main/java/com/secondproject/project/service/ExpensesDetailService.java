@@ -198,8 +198,20 @@ public class ExpensesDetailService {
         //     data.setPiSeq(1L); // null로 들어오면 강제로1로 들어오게 <<- swagger 집착때무네!!!!!!
         // }
         MapVO map = new MapVO();
-        MemberInfoEntity member = mRepo.findById(miSeq).get();
+        MemberInfoEntity member = mRepo.findById(miSeq).orElse(null); //*****get으로 바로 꺼내면 오류날수도있어요*****
+        if(member==null){
+            map.setStatus(false);
+            map.setMessage("회원번호 오류");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            return map;
+        }
         CategoryInfoEntity cate = cateRepo.findById(data.getCateSeq()).orElse(null);
+        if(cate==null){ //*****유효성 검사 추가했습니다*****
+            map.setStatus(false);
+            map.setMessage("카테고리번호 오류");
+            map.setCode(HttpStatus.BAD_REQUEST);
+            return map;
+        }
         PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()).orElse(null);
         if(data.getPiSeq()!=null && pay==null){
             map.setStatus(false);
@@ -217,19 +229,20 @@ public class ExpensesDetailService {
                 .edTitle(data.getEdtitle())
                 .edDate(data.getEdDate())
                 .edPiSeq(payRepo.findById(data.getPiSeq()).orElse(null)) // 결제수단 수정중
+                .edSat(data.getSat())
                 .build();
                 edRepo.save(newExpenses);
             map.setStatus(true);
             map.setMessage("지출내역이 등록되었습니다");
             map.setCode(HttpStatus.OK);
         }
-        else {
-            // System.out.println("aaaa");
-            // 이부분이 아니라 값이 입력이 안되면 500에러가 뜸
-            map.setStatus(false);
-            map.setMessage("필수 입력정보가 누락되었습니다.");
-            map.setCode(HttpStatus.BAD_REQUEST);
-        }
+        // else {
+        //     // System.out.println("aaaa");
+        //     // 이부분이 아니라 값이 입력이 안되면 500에러가 뜸
+        //     map.setStatus(false);
+        //     map.setMessage("필수 입력정보가 누락되었습니다.");
+        //     map.setCode(HttpStatus.BAD_REQUEST);
+        // }
         return map;
     }
 
@@ -238,34 +251,58 @@ public class ExpensesDetailService {
         // Map<String, Object> map = new LinkedHashMap<String, Object>();
         MapVO map = new MapVO();
         MemberInfoEntity member = mRepo.findById(miSeq).orElse(null);
-        ExpensesDetailEntity entity = edRepo.findMemberAndEdSeq(member, data.getEdSeq());
-        // System.out.println(data);
-        // 유효성 검사      // 비교할려면 다 가져와서 비교후 넘어가기
-        if((data.getEdAmount()==null && data.getEdCateSeq()==null && data.getEdTitle()==null) || data.getEdSeq()==null){
-            map.setStatus(false);
-            map.setMessage("필수 값이 입력되지 않았습니다.");
-            map.setCode(HttpStatus.BAD_REQUEST);
-            return map;
-        }
-        // 멤버랑, 지출내역을 찾아서 entity로 넣어주야뎀
-        if(member==null){
+        if(member==null){ //*****순서바꿈******
             map.setStatus(false);
             map.setMessage("잘못된 회원번호입니다.");
             map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
+        ExpensesDetailEntity entity = edRepo.findMemberAndEdSeq(member, data.getEdSeq());
         if(entity==null){
             map.setStatus(false);
             map.setMessage("수정할수없습니다. 잘못된번호거나 본인이 작성한 내역이 아닙니다.");
             map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
-        if(data.getPiSeq() == null || data.getPiSeq() > payList().size()){
+        // 유효성 검사      // 비교할려면 다 가져와서 비교후 넘어가기
+        System.out.println(data);
+        if((data.getEdAmount()==null && data.getEdCateSeq()==null && data.getEdTitle()==null) && data.getEdDate()==null && data.getPiSeq()==null && data.getSat()==null){  //*****금액만 수정하는 경우도 있을수 잇음*****
             map.setStatus(false);
-            map.setMessage("결제 수단 번호 오류");
+            map.setMessage("수정할 값이 입력되지않았습니다.");
             map.setCode(HttpStatus.BAD_REQUEST);
             return map;
         }
+        // 멤버랑, 지출내역을 찾아서 entity로 넣어주야뎀
+        // if(data.getPiSeq() == null || data.getPiSeq() > payList().size()){
+        //     map.setStatus(false);
+        //     map.setMessage("결제 수단 번호 오류");
+        //     map.setCode(HttpStatus.BAD_REQUEST);
+        //     return map;
+        // }
+        if(data.getPiSeq()!=null){
+            PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()).orElse(null);
+            if(pay==null){
+                map.setStatus(false);
+                map.setMessage("결제 수단 번호 오류");
+                map.setCode(HttpStatus.BAD_REQUEST);
+            }else{
+                entity.setEdPiSeq(pay);
+            }
+        }
+        if(data.getEdCateSeq() != null) {
+            CategoryInfoEntity cate = cateRepo.findById(data.getEdCateSeq()).orElse(null);
+            if(cate==null){
+                map.setStatus(false);
+                map.setMessage("카테고리 번호 오류");
+                map.setCode(HttpStatus.BAD_REQUEST);
+            }else{
+                entity.setEdCateSeq(cate);
+            }
+        }
+        // if(data.getPiSeq() != null && data.getPiSeq() == 0) { // 결제수단 수정중
+        //     //PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()==0?1L:data.getPiSeq()).orElse(null);
+        //     entity.setEdPiSeq(pay);
+        // }
         if(StringUtils.hasText(data.getEdTitle())) { // null 이 아니라면 save.문이 실행한다.
             // !StringUtils.hasText  =>이거임 data.getEdTitle() == null || data.getEdTitle == ""
             entity.setEdTitle(data.getEdTitle());
@@ -273,22 +310,16 @@ public class ExpensesDetailService {
         if(data.getEdAmount() != null) {
             entity.setEdAmount(data.getEdAmount());
         }
-        if(data.getEdCateSeq() != null) {
-            CategoryInfoEntity cate = cateRepo.findById(data.getEdCateSeq()).orElse(null);
-            entity.setEdCateSeq(cate);
-        }
-        if(data.getEdDate() == null) {
-            entity.setEdDate(LocalDate.now());
-        }
+        // if(data.getEdDate() == null) { //*****날짜를 수정안한다는 의미일수도있어요*****
+        //     entity.setEdDate(LocalDate.now());
+        // }
         if(data.getEdDate() != null) {
             entity.setEdDate(data.getEdDate());
         }
-
-        if(data.getPiSeq() != null && data.getPiSeq() == 0) { // 결제수단 수정중
-            PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()).orElse(null);
-            //PaymentInfoEntity pay = payRepo.findById(data.getPiSeq()==0?1L:data.getPiSeq()).orElse(null);
-            entity.setEdPiSeq(pay);
+        if(data.getSat()!=null){
+            entity.setEdSat(data.getSat());
         }
+        
         edRepo.save(entity);
         
         map.setStatus(true);

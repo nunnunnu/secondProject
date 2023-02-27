@@ -20,5 +20,6 @@ public class PlusMinusExpensesVO {
     private LocalDate edDate;
     private Integer edAmount;
     private Long piSeq;
+    private Integer sat;
 
 }

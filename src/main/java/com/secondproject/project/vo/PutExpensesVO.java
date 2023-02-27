@@ -21,5 +21,6 @@ public class PutExpensesVO {
     private Integer edAmont;
     @Schema(description = "지출수단번호 0이면 강제 1입력")
     private Long piSeq;
+    private Integer sat;
 
 }
