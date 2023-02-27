@@ -82,6 +82,15 @@ public class BoardTest {
         assertThat(result).isNull();
     }
     @Test
+    public void 게시글삭제실패(){
+        BoardInfoEntity board = new BoardInfoEntity(null, member, "글제목1", "글내용1", LocalDateTime.now(), null, 0, 1, target, null, null);
+        bRepo.save(board);
+        if(board.getBiStatus()==0){
+            fail();
+            bRepo.delete(board);
+        }
+    }
+    @Test
     public void 게시글조회(){
         Integer view = newBoard.getBiViews();
         BoardInfoEntity findBoard = bRepo.findByBiSeqAndBiStatus(newBoard.getBiSeq(),0);

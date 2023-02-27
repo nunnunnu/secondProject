@@ -15,10 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.secondproject.project.entity.CategoryInfoEntity;
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
+import com.secondproject.project.entity.PaymentInfoEntity;
 import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
+import com.secondproject.project.repository.PaymentInfoRepository;
 import com.secondproject.project.repository.TargerAreaInfoRepository;
 import com.secondproject.project.vo.CategoryExpensesVO;
 import com.secondproject.project.vo.DailyExpensesSearchVO;
@@ -44,6 +46,7 @@ public class StatisticsTest {
     @Autowired CategoryInfoRepository cRepo;
     @Autowired ExpensesDetailRepository edRepo;
     @Autowired TargerAreaInfoRepository tRepo;
+    @Autowired PaymentInfoRepository pRepo;
 
     @BeforeEach
     public void beforeEach(){
@@ -53,14 +56,17 @@ public class StatisticsTest {
         cate2 = new CategoryInfoEntity(null, "테스트용2");
         cRepo.save(cate);
         cRepo.save(cate2);
+        PaymentInfoEntity pay = new PaymentInfoEntity(null, "테스트용");
+        pRepo.save(pay);
+        
 
-        nowExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1), 10000);
-        nowExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now(), 9000);
-        nowExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now(), 11000);
-        pastExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1).minusMonths(1), 5000);
-        pastExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now().minusMonths(1), 4000);
-        pastExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusMonths(1), 6000);
-        LastYearExpense = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusYears(1), 6000);
+        nowExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1), 10000, pay);
+        nowExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now(), 9000, pay);
+        nowExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now(), 11000, pay);
+        pastExpense = new ExpensesDetailEntity(null, member, "밥", cate, LocalDate.now().minusDays(1).minusMonths(1), 5000, pay);
+        pastExpense2 = new ExpensesDetailEntity(null, member, "간식", cate2, LocalDate.now().minusMonths(1), 4000, pay);
+        pastExpense3 = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusMonths(1), 6000, pay);
+        LastYearExpense = new ExpensesDetailEntity(null, member, "교통", cate2, LocalDate.now().minusYears(1), 6000, pay);
         edRepo.save(nowExpense);
         edRepo.save(nowExpense2);
         edRepo.save(nowExpense3);
