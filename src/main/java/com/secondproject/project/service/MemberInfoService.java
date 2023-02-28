@@ -310,7 +310,7 @@ public class MemberInfoService {
             resultMap.put("code", HttpStatus.BAD_REQUEST);
             return resultMap;
         }
-        entity.setMiTargetAmount(data.getMiTargetAmount());
+        entity.setMiTargetAmount(data.getMiTargetAmount()==0?null:data.getMiTargetAmount());
         memberInfoRepository.save(entity);
         resultMap.put("status", "true");
         resultMap.put("message","변경되었습니다.");

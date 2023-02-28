@@ -120,7 +120,7 @@ public class BoardController {
     @GetMapping("/show/list/{member}")
     public ResponseEntity<Page<BoardShowVO>> getBoard(
         @Parameter(description = "회원번호") @PathVariable Long member,
-        @Parameter(hidden=true) @PageableDefault(size=10, sort="biRegDt",direction = Sort.Direction.ASC) Pageable page
+        @Parameter(hidden=true) @PageableDefault(size=8, sort="biRegDt",direction = Sort.Direction.ASC) Pageable page
     ){
         Map<String, Object> map = bService.getBoard(member, page);
         if(!(boolean)map.get("status")){

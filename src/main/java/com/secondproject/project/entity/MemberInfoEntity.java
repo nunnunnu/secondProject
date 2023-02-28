@@ -61,7 +61,7 @@ public class MemberInfoEntity {
         this.miPwd = data.getMiPwd();
         this.miNickname = data.getMiNickname();
         this.miGen = data.getMiGen();
-        this.miTargetAmount = data.getMiTargetAmount();
+        this.miTargetAmount = data.getMiTargetAmount()==0?null:data.getMiTargetAmount();
         this.miToken = data.getMiToken();
         this.miSnsType = data.getMiSnsType();
     }
