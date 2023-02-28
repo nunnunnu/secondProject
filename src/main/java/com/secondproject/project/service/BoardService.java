@@ -62,7 +62,7 @@ public class BoardService {
         }
         TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
         
-        List<BoardImageEntity> fileList = new ArrayList<>();
+        // List<BoardImageEntity> fileList = new ArrayList<>();
         BoardInfoEntity entity = BoardInfoEntity.builder()
                                 .biMiSeq(member)
                                 .biTitle(data.getTitle())
@@ -76,10 +76,10 @@ public class BoardService {
             for(MultipartFile f : file){
                 BoardImageEntity img = fService.saveImageFile(f);
                 img.setBimgBiSeq(entity);
-                fileList.add(img);
+                // fileList.add(img);
+                bimgRepo.save(img);
             }
         }
-        bimgRepo.saveAll(fileList);
         
         map.setStatus(true);
         map.setMessage("게시글을 등록하였습니다.");
