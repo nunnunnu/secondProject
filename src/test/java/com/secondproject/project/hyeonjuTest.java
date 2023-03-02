@@ -17,12 +17,14 @@ import com.secondproject.project.entity.CommentInfoEntity;
 import com.secondproject.project.entity.ExpensesDetailEntity;
 import com.secondproject.project.entity.MemberInfoEntity;
 import com.secondproject.project.entity.PaymentInfoEntity;
+import com.secondproject.project.entity.TargetAreaInfoEntity;
 import com.secondproject.project.repository.BoardInfoRepository;
 import com.secondproject.project.repository.CategoryInfoRepository;
 import com.secondproject.project.repository.CommentInfoRepository;
 import com.secondproject.project.repository.ExpensesDetailRepository;
 import com.secondproject.project.repository.MemberInfoRepository;
 import com.secondproject.project.repository.PaymentInfoRepository;
+import com.secondproject.project.repository.TargerAreaInfoRepository;
 import com.secondproject.project.service.ExpensesDetailService;
 import com.secondproject.project.vo.MonthListExpensesVO;
 import com.secondproject.project.vo.UpperCommentVO;
@@ -38,6 +40,7 @@ class hyeonjuTest {
     @Autowired CommentInfoRepository comRepo;
     @Autowired BoardInfoRepository bRepo;
     @Autowired PaymentInfoRepository pRepo;
+    @Autowired TargerAreaInfoRepository tRepo;
     
     @Test
     void 월별지출리스트() {
@@ -148,9 +151,13 @@ class hyeonjuTest {
     void 댓글삭제() {
         // 댓글 ciStatus로 0을 1로 바꿔서 상태로 변경
         MemberInfoEntity member = mRepo.findAll().get(0);
+        TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
         // BoardInfoEntity board = bRepo.findAll().get(1);
+        BoardInfoEntity board = new BoardInfoEntity(null, member, "글제목1", "글내용1", LocalDateTime.now(), null, 0, 0, target, null, null);
+        bRepo.save(board);
+        CommentInfoEntity comment = new CommentInfoEntity(null, member, "aaa", LocalDateTime.now(), null, 0, null, board);
 
-        CommentInfoEntity comment = comRepo.findByCiSeqAndCiStatusAndMemberInfoEntity(11L, 0, member);
+        // CommentInfoEntity comment = comRepo.findByCiSeqAndCiStatusAndMemberInfoEntity(null, 0, member);
         comment.setCiStatus(1);
         comRepo.save(comment); // delete에는 @Transactional 없으면 터지고
         System.out.println(comment.getCiStatus()); // 연관관계 맵핑이 걸려있어서 comment 만 하면 가져올수 없음
