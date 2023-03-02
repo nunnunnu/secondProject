@@ -21,6 +21,9 @@ public interface ExpensesDetailRepository extends JpaRepository<ExpensesDetailEn
 
     List<ExpensesDetailEntity> findTop3ByEdMiSeqAndEdDateBetweenOrderByEdDateDesc(MemberInfoEntity member, LocalDate start, LocalDate end);
 
+    // 지출내역 조회 DESC 해주기
+    List<ExpensesDetailEntity> findByEdMiSeqAndEdDateBetweenOrderByEdDateDesc(MemberInfoEntity member, LocalDate start, LocalDate end);
+
     List<ExpensesDetailEntity> findByEdMiSeq(MemberInfoEntity member);
     //jpql
     @Query("SELECT e FROM ExpensesDetailEntity e join fetch e.edMiSeq m join fetch e.edCateSeq c WHERE e.edMiSeq = :member AND e.edCateSeq = :cate")
