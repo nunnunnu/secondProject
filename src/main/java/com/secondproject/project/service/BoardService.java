@@ -334,7 +334,7 @@ public class BoardService {
         Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b), ciRepo.countByBoardInfoEntityAndCiStatus(b, 0)));
         System.out.println(boards.getTotalElements());
         map.put("status", true);
-        // map.put("data", result);
+        map.put("data", result);
 
         return map;
     }
