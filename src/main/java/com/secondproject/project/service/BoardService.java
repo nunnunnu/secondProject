@@ -238,7 +238,7 @@ public class BoardService {
         if(member.getMiTargetAmount()!=null){
             TargetAreaInfoEntity target = tRepo.findTarget(member.getMiTargetAmount());
             Page<BoardInfoEntity> boards = biRepo.findByBiTaiSeqAndBiStatusOrderByBiRegDtDesc(target, 0,page);
-            Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
+            Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b), ciRepo.countByBoardInfoEntityAndCiStatus(b, 0)));
 
             map.put("status", true);
             // map.put("message", "해당 구간의 게시글을 조회했습니다");
@@ -246,7 +246,7 @@ public class BoardService {
             map.put("data", result);
         }else{
             Page<BoardInfoEntity> boards = biRepo.findByBiStatusOrderByBiRegDtDesc(0,page);
-            Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
+            Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b), ciRepo.countByBoardInfoEntityAndCiStatus(b, 0)));
 
             map.put("status", true);
             // map.put("message", "모든 게시글을 조회했습니다");
@@ -331,10 +331,10 @@ public class BoardService {
             return map;  
         }
         
-        Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b)));
+        Page<BoardShowVO> result = boards.map(b->new BoardShowVO(b, clRepo.countByClStatusAndClBiSeq(0, b), ciRepo.countByBoardInfoEntityAndCiStatus(b, 0)));
         System.out.println(boards.getTotalElements());
         map.put("status", true);
-        map.put("data", result);
+        // map.put("data", result);
 
         return map;
     }

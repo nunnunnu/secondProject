@@ -27,11 +27,11 @@ public class BoardShowVO {
     @Schema(description = "좋아요 수")
     private Long likes;
 
-    public BoardShowVO(BoardInfoEntity entity, Long likes){
+    public BoardShowVO(BoardInfoEntity entity, Long likes, int comment){
         this.seq = entity.getBiSeq();
         this.title = entity.getBiTitle();
         this.regDt = entity.getBiRegDt().toLocalDate();
-        this.comment = entity.getComment().size();
+        this.comment = comment;
         this.likes = likes;
     }
 

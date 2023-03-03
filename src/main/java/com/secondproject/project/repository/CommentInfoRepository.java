@@ -35,4 +35,6 @@ public interface CommentInfoRepository extends JpaRepository<CommentInfoEntity, 
     @Modifying
     @Query("update CommentInfoEntity c set c.ciStatus=1 where c.boardInfoEntity=:board")
     void commentDeleteQuery(@Param("board") BoardInfoEntity board);
+
+    Integer countByBoardInfoEntityAndCiStatus(BoardInfoEntity board, int status);
 }
