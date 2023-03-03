@@ -149,16 +149,17 @@ public class ExpensesDetailService {
         //  Integer year, Integer month -> localdate start localdate end
         //  LocalDate firstDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
         //  LocalDate lastedDate = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate start = LocalDate.of(year, month, 1).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = start.with(TemporalAdjusters.lastDayOfMonth());
+
         MemberInfoEntity member = mRepo.findByMiSeq(miSeq);
-        List<ExpensesDetailEntity> entity = edRepo.findByEdMiSeq(member);
+        List<ExpensesDetailEntity> entity = edRepo.findByEdMiSeqAndEdDateBetweenOrderByEdDateDesc(member, start, end);
             // VO를 리스트로 가져오면 builder에 있는 것을 계속 해서 
             // 하드코딩으로 변수명 같은 것을 바꿔줘야해서 VO 생성자를 가지고 하는 것이
             // Service에서 활용도가 높다.
         List<MonthListExpensesVO> list = new ArrayList<>();
         for(int i=0; i<entity.size(); i++){
-            if(year == entity.get(i).getEdDate().getYear() && month == entity.get(i).getEdDate().getMonthValue()) {
                 list.add( new MonthListExpensesVO(entity.get(i)));
-            }
         }
         // 유효성 검사 하기! null 값이 들어왔을때! controller에 400에러 같은거 api에 붙여주기
 
