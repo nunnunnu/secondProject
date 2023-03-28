@@ -40,4 +40,3 @@
 
 1차 프로젝트에서 복잡한 쿼리문을 작성하려고 하다보니 native쿼리를 사용할 수 밖에 없었는데 그것을 해결하기 위해 querydsl을 처음 도입해서 사용해보았다.
 
-[이력서 페이지로 돌아가기](https://www.notion.so/Jinhee-Park-60fef02523c1491ba4fdfee4a4562252)
