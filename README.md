@@ -11,7 +11,7 @@
 
 </aside>
 
-[테이블 명세서 파일](https://www.notion.so/28f5cb3768864d01bae4bbaec02b1344)
+[테이블 명세서 파일 (노션페이지)](https://www.notion.so/28f5cb3768864d01bae4bbaec02b1344)
 
 ### **깃허브 프로젝트 주소**
 
@@ -24,14 +24,15 @@
 ---
 
 ## 시연 영상
+[![Video Label](http://img.youtube.com/vi/bXjNMiYFE1A/0.jpg)]
+(https://youtu.be/bXjNMiYFE1A)
+---
 
-[https://youtu.be/bXjNMiYFE1A](https://youtu.be/bXjNMiYFE1A)
+[구현 기능 (노션페이지)](https://www.notion.so/4e0b334ca468464c80118d4b3949e04a)
 
-[구현 기능](https://www.notion.so/4e0b334ca468464c80118d4b3949e04a)
+[작업일지 (노션페이지)](https://www.notion.so/022ab3baa4af4364a737ef3f77779d35)
 
-[작업일지](https://www.notion.so/022ab3baa4af4364a737ef3f77779d35)
-
-[회의록](https://www.notion.so/f99e031b78574cde887ab0157cf1cc20)
+[회의록 (노션페이지)](https://www.notion.so/f99e031b78574cde887ab0157cf1cc20)
 
 - 후기
 
