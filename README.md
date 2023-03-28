@@ -13,10 +13,6 @@
 
 [테이블 명세서 파일 (노션페이지)](https://www.notion.so/28f5cb3768864d01bae4bbaec02b1344)
 
-### **깃허브 프로젝트 주소**
-
-[https://github.com/nunnunnu/secondProject](https://github.com/nunnunnu/secondProject)
-
 ### PPT 주소
 
 [secondProj_나의텅장](https://www.canva.com/design/DAFbRcKg360/sqaf75TdI98IzeZsPyqbbg/edit)
