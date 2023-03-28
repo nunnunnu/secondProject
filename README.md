@@ -13,7 +13,8 @@
 
 </aside>
 
-[테이블 명세서 파일 (노션페이지)](https://www.notion.so/28f5cb3768864d01bae4bbaec02b1344)
+
+[테이블 명세서 파일 (노션페이지)](https://coordinated-sunset-4f9.notion.site/28f5cb3768864d01bae4bbaec02b1344)
 
 ### PPT 주소
 
@@ -26,17 +27,9 @@
 (https://youtu.be/bXjNMiYFE1A)
 ---
 
-[구현 기능 (노션페이지)](https://www.notion.so/4e0b334ca468464c80118d4b3949e04a)
+[구현 기능 (노션페이지)](https://coordinated-sunset-4f9.notion.site/4e0b334ca468464c80118d4b3949e04a?v=a50fa3472a26488a9e47621f39b663d6)
 
-[작업일지 (노션페이지)](https://www.notion.so/022ab3baa4af4364a737ef3f77779d35)
+[작업일지 (노션페이지)](https://coordinated-sunset-4f9.notion.site/022ab3baa4af4364a737ef3f77779d35?v=fb2adfdeb7104e868166d0c39465dc5a)
 
-[회의록 (노션페이지)](https://www.notion.so/f99e031b78574cde887ab0157cf1cc20)
-
-- 후기
-
-작업 기간이 짧다는 생각때문에 프로젝트 규모를 축소시킨것이 가장 아쉽다. 그러나 통계 기능을 구현하기위해 복잡한 쿼리문을 작성해야할 일이 많았는데 querydsl을 이용해서 구성할 수 있었다.
-
-소셜로그인 구현이 초기 목표에 있었으나 프론트팀에서 시간관계상 구현이 어려울거같다고 해서 시도해보지 못한것이 아쉽다.
-
-1차 프로젝트에서 복잡한 쿼리문을 작성하려고 하다보니 native쿼리를 사용할 수 밖에 없었는데 그것을 해결하기 위해 querydsl을 처음 도입해서 사용해보았다.
+[회의록 (노션페이지)](https://coordinated-sunset-4f9.notion.site/f99e031b78574cde887ab0157cf1cc20?v=da31514252794ec0a824e37df02d5889)
 
