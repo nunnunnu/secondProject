@@ -34,6 +34,17 @@
 |댓글 조회	|60	|댓글	|게시글의 댓글 조회. 답글 기능 추가, 삭제한 댓글 표기
 |댓글 작성	|60	|댓글	|상위 댓글 번호의 여부에 따라 댓글/답댓글 구분
 
+## 시연 영상
+[![Video Label](http://img.youtube.com/vi/bXjNMiYFE1A/0.jpg)]
+(https://youtu.be/bXjNMiYFE1A)
+---
+
+# 그외 
+
+[작업일지 (노션페이지)](https://coordinated-sunset-4f9.notion.site/022ab3baa4af4364a737ef3f77779d35?v=fb2adfdeb7104e868166d0c39465dc5a)
+
+[회의록 (노션페이지)](https://coordinated-sunset-4f9.notion.site/f99e031b78574cde887ab0157cf1cc20?v=da31514252794ec0a824e37df02d5889)
+
 [테이블 명세서 파일 (노션페이지)](https://coordinated-sunset-4f9.notion.site/28f5cb3768864d01bae4bbaec02b1344)
 
 ### PPT 주소
@@ -41,13 +52,4 @@
 [secondProj_나의텅장](https://www.canva.com/design/DAFbRcKg360/sqaf75TdI98IzeZsPyqbbg/edit)
 
 ---
-
-## 시연 영상
-[![Video Label](http://img.youtube.com/vi/bXjNMiYFE1A/0.jpg)]
-(https://youtu.be/bXjNMiYFE1A)
----
-
-[작업일지 (노션페이지)](https://coordinated-sunset-4f9.notion.site/022ab3baa4af4364a737ef3f77779d35?v=fb2adfdeb7104e868166d0c39465dc5a)
-
-[회의록 (노션페이지)](https://coordinated-sunset-4f9.notion.site/f99e031b78574cde887ab0157cf1cc20?v=da31514252794ec0a824e37df02d5889)
 
