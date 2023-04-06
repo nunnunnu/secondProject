@@ -39,7 +39,7 @@
 (https://youtu.be/bXjNMiYFE1A)
 ---
 
-# 그외 
+# 그외 링크
 
 [작업일지 (노션페이지)](https://coordinated-sunset-4f9.notion.site/022ab3baa4af4364a737ef3f77779d35?v=fb2adfdeb7104e868166d0c39465dc5a)
 
